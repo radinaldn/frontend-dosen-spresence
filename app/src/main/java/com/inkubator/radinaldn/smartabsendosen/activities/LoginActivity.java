@@ -61,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
         btlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, "onClick: btlogin di tekan");
                 loginUser();
             }
         });
