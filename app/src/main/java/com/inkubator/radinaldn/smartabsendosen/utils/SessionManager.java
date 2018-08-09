@@ -29,6 +29,8 @@ public class SessionManager {
     public static final String JK = "jk";
     public static final String FOTO = "foto";
 
+    public static final String SHARE_LOC_IS_ON = "shareLocIsOn";
+
     public Context get_context(){
         return _context;
     }
@@ -49,6 +51,15 @@ public class SessionManager {
         editor.putString(JK, jk);
         editor.putString(FOTO, foto);
         editor.commit();
+    }
+
+    public void setStatusSwitchShareLoc(boolean status){
+        editor.putBoolean(SHARE_LOC_IS_ON, status);
+        editor.commit();
+    }
+
+    public boolean getStatusSwitchShareLoc(){
+        return sharedPreferences.getBoolean(SHARE_LOC_IS_ON, false);
     }
 
     public HashMap<String, String> getDosenDetail(){

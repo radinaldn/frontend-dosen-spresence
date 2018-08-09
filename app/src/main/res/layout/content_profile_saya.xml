@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.ProfileSayaActivity"
+    tools:showIn="@layout/activity_profile_saya"
+    android:padding="@dimen/activity_vertical_margin">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            style="@style/TextSpec.Field"
+            android:text="Info"
+
+            />
+
+        <TextView
+            android:textSize="18sp"
+            android:text="130517100"
+            android:id="@+id/tv_nip"
+            style="@style/TextSpec.Value" />
+
+        <TextView
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            style="@style/TextSpec.Gray"
+            android:text="Nip"
+            />
+
+        <View
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            />
+
+        <TextView
+            android:textSize="18sp"
+            android:text="Nazruddin Safaat H"
+            android:id="@+id/tv_nama"
+            style="@style/TextSpec.Value" />
+
+        <TextView
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            style="@style/TextSpec.Gray"
+            android:text="Nama"
+            />
+
+        <View
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            />
+
+        <TextView
+            android:textSize="18sp"
+            android:text="35872635215"
+            android:id="@+id/tv_imei"
+            style="@style/TextSpec.Value" />
+
+        <TextView
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            style="@style/TextSpec.Gray"
+            android:text="Imei"
+            />
+
+        <View
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            />
+
+        <!--<TextView-->
+            <!--android:textSize="18sp"-->
+            <!--android:text="1078625247"-->
+            <!--android:id="@+id/tv_id_telegram"-->
+            <!--style="@style/TextSpec.Value" />-->
+
+        <!--<TextView-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--android:gravity="center"-->
+            <!--style="@style/TextSpec.Gray"-->
+            <!--android:text="ID Telegram"-->
+            <!--/>-->
+
+        <!--<View-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="1dp"-->
+            <!--android:background="@color/colorAccent"-->
+            <!--/>-->
+
+        <TextView
+            android:textSize="18sp"
+            android:text="Laki-Laki"
+            android:id="@+id/tv_jk"
+            style="@style/TextSpec.Value" />
+
+        <TextView
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            style="@style/TextSpec.Gray"
+            android:text="Jenis Kelamin"
+            />
+
+
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import com.inkubator.radinaldn.smartabsendosen.responses.ResponseLogin;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiClient;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiInterface;
 import com.inkubator.radinaldn.smartabsendosen.utils.SessionManager;
+import com.onurkaganaldemir.ktoastlib.KToast;
 
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
     private void loginUser() {
         nip = etnip.getText().toString();
         password = etpassword.getText().toString();
-        imei = "356876057383575";
+            imei = "356876057383575";
 
         Log.d(TAG, "loginUser: " + nip +" "+password+" "+imei);
 
@@ -93,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, "onResponse: Dapat data dosen");
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        Toast.makeText(LoginActivity.this, "Berhasil login", Toast.LENGTH_LONG).show();
+                        KToast.successToast(LoginActivity.this, "Berhasil login.", Gravity.BOTTOM, KToast.LENGTH_SHORT);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);
                         finish();
@@ -109,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "Gagal konek ke server", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Gagal konek ke server", Toast.LENGTH_LONG).show();
                 Log.e(TAG, "onFailure: "+ t.getLocalizedMessage());
             }
         });
