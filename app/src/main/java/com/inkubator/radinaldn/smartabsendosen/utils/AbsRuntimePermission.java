@@ -1,7 +1,7 @@
-package com.inkubator.radinaldn.smartabsendosen;
+package com.inkubator.radinaldn.smartabsen.utils;
 
 /**
- * Created by radinaldn on 17/03/18.
+ * Created by radinaldn on 04/09/18.
  */
 
 import android.app.Activity;
@@ -17,8 +17,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.SparseIntArray;
 import android.view.View;
+/**
+ * Created by radinaldn on 10/02/18.
+ */
 
-public abstract class AbsRunTimePermission extends Activity {
+public abstract class AbsRuntimePermission extends Activity {
     private SparseIntArray mErrorString;
 
     @Override
@@ -45,7 +48,7 @@ public abstract class AbsRunTimePermission extends Activity {
                 Snackbar.make(findViewById(android.R.id.content), stringId, Snackbar.LENGTH_INDEFINITE).setAction("GRANT", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ActivityCompat.requestPermissions(AbsRunTimePermission.this, requestedPermissions, requestCode);
+                        ActivityCompat.requestPermissions(AbsRuntimePermission.this, requestedPermissions, requestCode);
                     }
                 }).show();
             } else {
