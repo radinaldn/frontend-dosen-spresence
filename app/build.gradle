@@ -20,6 +20,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.karumi:dexter:4.2.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
     implementation 'com.github.onurkagan:ktoast:1.0.2'
     implementation 'com.facebook.stetho:stetho:1.5.0'

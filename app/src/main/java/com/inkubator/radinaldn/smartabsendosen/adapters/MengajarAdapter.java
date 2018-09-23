@@ -1,25 +1,18 @@
 package com.inkubator.radinaldn.smartabsendosen.adapters;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +20,6 @@ import android.widget.Toast;
 import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.activities.HistoriMengajarActivity;
 import com.inkubator.radinaldn.smartabsendosen.activities.HistoriPresensiActivity;
-import com.inkubator.radinaldn.smartabsendosen.activities.MainActivity;
 import com.inkubator.radinaldn.smartabsendosen.activities.MengajarActivity;
 import com.inkubator.radinaldn.smartabsendosen.models.Mengajar;
 import com.inkubator.radinaldn.smartabsendosen.models.Ruangan;
@@ -35,12 +27,11 @@ import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensi;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseRuangan;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiClient;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiInterface;
-import com.onurkaganaldemir.ktoastlib.KToast;
+import com.inkubator.radinaldn.smartabsendosen.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,11 +42,13 @@ import retrofit2.Response;
 
 public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.MengajarViewHolder> {
 
+    private static final String TAG_NIP = "nip";
     private Context mContext;
 
     private ArrayList<Mengajar> dataList;
     private static final String TAG = MengajarAdapter.class.getSimpleName();
 
+    SessionManager sessionManager;
     ApiInterface apiService;
 
     public MengajarAdapter(ArrayList<Mengajar> dataList, Context context) {
@@ -74,6 +67,7 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
         apiService = ApiClient.getClient().create(ApiInterface.class);
 
 
+        sessionManager = new SessionManager(mContext);
 
         return new MengajarViewHolder(view);
     }
@@ -246,7 +240,7 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                 @Override
                 public void onClick(DialogInterface dialog, final int item) {
                     final String selectedIdRuangan = ruangan.get(item).getIdRuangan();
-                    String selectedNamaRuangan = ruangan.get(item).getNama();
+                    final String selectedNamaRuangan = ruangan.get(item).getNama();
 
                     // show confirmation box
                     confirmBox.setTitle("Konfirmasi");
@@ -272,7 +266,7 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                                 if (current_lat == null) {
                                     Toast.makeText(itemView.getContext(), "Aplikasi sedang membaca lokasi anda, scroll layar ke bawah dan coba lagi.", Toast.LENGTH_LONG).show();
                                 } else {
-                                    presensiAdd(id_mengajar, selectedIdRuangan, current_lat, current_lng);
+                                    presensiAdd(id_mengajar, selectedIdRuangan, current_lat, current_lng, sessionManager.getDosenDetail().get(TAG_NIP), selectedNamaRuangan);
                                 }
 
 
@@ -299,8 +293,8 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
             alertDialog1.show();
         }
 
-        public void presensiAdd(String id_mengajar, String id_ruangan, String lat, String lng){
-            apiService.presensiAdd(id_mengajar, id_ruangan, lat, lng).enqueue(new Callback<ResponsePresensi>() {
+        public void presensiAdd(String id_mengajar, String id_ruangan, String lat, String lng, String nip, String nama_ruangan){
+            apiService.presensiAdd(id_mengajar, id_ruangan, lat, lng, nip, nama_ruangan).enqueue(new Callback<ResponsePresensi>() {
                 @Override
                 public void onResponse(Call<ResponsePresensi> call, Response<ResponsePresensi> response) {
                     Log.d(TAG, "onResponse: "+response);

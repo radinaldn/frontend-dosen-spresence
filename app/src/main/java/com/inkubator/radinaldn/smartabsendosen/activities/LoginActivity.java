@@ -4,6 +4,7 @@ package com.inkubator.radinaldn.smartabsendosen.activities;
  * Created by radinaldn on 17/03/18.
  */
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.inkubator.radinaldn.smartabsendosen.models.Dosen;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseLogin;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiClient;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiInterface;
+import com.inkubator.radinaldn.smartabsendosen.utils.AbsRuntimePermission;
 import com.inkubator.radinaldn.smartabsendosen.utils.SessionManager;
 import com.onurkaganaldemir.ktoastlib.KToast;
 
@@ -32,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AbsRuntimePermission {
 
     @BindView(R.id.etnip)
     EditText etnip;
@@ -48,11 +50,22 @@ public class LoginActivity extends AppCompatActivity {
 
     String nip, password, imei;
     public final String TAG = LoginActivity.class.getSimpleName();
+    private static final int REQUEST_PERMISSION = 10;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // do runtime permission
+        //request permission here
+        requestAppPermissions(new String[]{
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION},
+                R.string.msg,REQUEST_PERMISSION);
 
         //init
         ButterKnife.bind(this);
@@ -66,6 +79,11 @@ public class LoginActivity extends AppCompatActivity {
                 loginUser();
             }
         });
+    }
+
+    @Override
+    public void onPermissionGranted(int requestcode) {
+        Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
     }
 
     private void loginUser() {

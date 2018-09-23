@@ -1,4 +1,4 @@
-package com.inkubator.radinaldn.smartabsendosen;
+package com.inkubator.radinaldn.smartabsendosen.utils;
 
 /**
  * Created by radinaldn on 20/03/18.

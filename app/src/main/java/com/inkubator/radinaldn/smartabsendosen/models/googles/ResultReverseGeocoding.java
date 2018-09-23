@@ -1,4 +1,4 @@
-package com.inkubator.radinaldn.smartabsendosen.models;
+package com.inkubator.radinaldn.smartabsendosen.models.googles;
 
 /**
  * Created by radinaldn on 10/08/18.
@@ -10,16 +10,18 @@ import com.google.gson.annotations.SerializedName;
 
 public class ResultReverseGeocoding {
 
+    @SerializedName("address_components")
+    @Expose
+    private List<AddressComponent> addressComponents = null;
 
     @SerializedName("formatted_address")
     @Expose
     private String formattedAddress;
-    @SerializedName("geometry")
-    @Expose
-    private Geometry geometry;
+
     @SerializedName("place_id")
     @Expose
     private String placeId;
+
     @SerializedName("types")
     @Expose
     private List<String> types = null;
@@ -38,14 +40,6 @@ public class ResultReverseGeocoding {
 
     public void setFormattedAddress(String formattedAddress) {
         this.formattedAddress = formattedAddress;
-    }
-
-    public Geometry getGeometry() {
-        return geometry;
-    }
-
-    public void setGeometry(Geometry geometry) {
-        this.geometry = geometry;
     }
 
     public String getPlaceId() {

@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by radinaldn on 10/08/18.
  */
 
-public class GoogleApiClient {
+public class MyGoogleApiClient {
 
     private static final String GOOGLE_BASE_URL = ServerConfig.GOOGLE_API_ENDPOINT;
     private static Retrofit retrofit = null;

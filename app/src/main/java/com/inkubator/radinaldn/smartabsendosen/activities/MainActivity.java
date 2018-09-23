@@ -13,7 +13,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
@@ -26,36 +29,63 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
+import com.inkubator.radinaldn.smartabsendosen.adapters.MengajarAdapter;
 import com.inkubator.radinaldn.smartabsendosen.config.ServerConfig;
 import com.inkubator.radinaldn.smartabsendosen.R;
+import com.inkubator.radinaldn.smartabsendosen.models.Mengajar;
+import com.inkubator.radinaldn.smartabsendosen.responses.ResponseMengajar;
+import com.inkubator.radinaldn.smartabsendosen.rests.ApiClient;
+import com.inkubator.radinaldn.smartabsendosen.rests.ApiInterface;
+import com.inkubator.radinaldn.smartabsendosen.services.ShareLocService;
 import com.inkubator.radinaldn.smartabsendosen.utils.SessionManager;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ImageView imageView;
-    TextView tvname, tvjurusan;
+    TextView tvname, tvjurusan, tv_libur;;
     private ProgressDialog pDialog;
     private SwitchCompat swbagikanlokasi;
 
-    String nim, imei, nama, foto, id_fakultas, id_jurusan, nama_jurusan;
-    SharedPreferences sharedPreferences;
-
     private static final String TAG = MengajarActivity.class.getSimpleName();
+    private static String NIP;
     public static final String TAG_NIP = "nip";
     public static final String TAG_IMEI = "imei";
     public static final String TAG_NAMA = "nama";
     public static final String TAG_FOTO = "foto";
 
     SessionManager sessionManager;
+    static SessionManager staticSessionManager;
 
     boolean isGPSEnabled;
     LocationManager manager;
+
+    // function for set the state of switch (on/off)
+    public static void setSwBagikanLokasi(boolean status, Context context){
+        if (staticSessionManager==null){
+            staticSessionManager = new SessionManager(context);
+        }
+        staticSessionManager.setStatusSwitchShareLoc(false);
+    }
+
+    SwipeRefreshLayout swipeRefreshLayout;
+    ApiInterface apiService;
+
+    private RecyclerView recyclerView;
+    private MengajarAdapter adapter;
+    private ArrayList<Mengajar> mengajarArrayList;
 
 
     @Override
@@ -80,6 +110,8 @@ public class MainActivity extends AppCompatActivity
             startActivity(i);
             finish();
         }
+
+        apiService = ApiClient.getClient().create(ApiInterface.class);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +143,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 //Snackbar.make(v, (swbagikanlokasi.isChecked()) ? "is checked!!!" : "not checked!!!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 if (swbagikanlokasi.isChecked()){
-                    Snackbar.make(v, "aktif", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    Snackbar.make(v, "Fitur bagikan info kehadiran aktif", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                     sessionManager.setStatusSwitchShareLoc(true);
 
                     // Tampilkan Simple Notif
@@ -130,9 +162,15 @@ public class MainActivity extends AppCompatActivity
                     NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                     manager.notify(0, mBuilder.build());
 
+                    // jalankan service background
+                    startService(new Intent(MainActivity.this, ShareLocService.class));
+
                 } else {
-                    Snackbar.make(v, "tidak aktif", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    Snackbar.make(v, "Fitur bagikan infor kehadiran non-aktif", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                     sessionManager.setStatusSwitchShareLoc(false);
+
+                    // stop service
+                    stopService(new Intent(MainActivity.this, ShareLocService.class));
                 }
             }
         });
@@ -150,8 +188,48 @@ public class MainActivity extends AppCompatActivity
         tvname.setText(sessionManager.getDosenDetail().get(TAG_NAMA));
         tvjurusan.setText("(" +sessionManager.getDosenDetail().get(TAG_NIP)+ ")");
 
+        tv_libur = findViewById(R.id.tv_libur);
+        /**
+        Isi data Kuliah hari ini
+         */
 
+        recyclerView = findViewById(R.id.recyclerView);
 
+        NIP = sessionManager.getDosenDetail().get(TAG_NIP);
+
+        getMengajarHariIni(NIP);
+
+    }
+
+    private void getMengajarHariIni(String nip) {
+        System.out.println("Ambil data mengajar hari ini");
+        apiService.mengajarFindAllTodayByNip(nip).enqueue(new Callback<ResponseMengajar>() {
+            @Override
+            public void onResponse(Call<ResponseMengajar> call, Response<ResponseMengajar> response) {
+                System.out.println(response.toString());
+                if(response.isSuccessful()){
+                    System.out.println("Ada data : "+response.body().getMengajar().size());
+                    if(response.body().getMengajar().size()>0){
+                        //hilangkan pesan libur
+                        tv_libur.setVisibility(View.GONE);
+                        mengajarArrayList = new ArrayList<>();
+                        mengajarArrayList.addAll(response.body().getMengajar());
+
+                        adapter = new MengajarAdapter(mengajarArrayList, getApplicationContext());
+                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                        recyclerView.setLayoutManager(layoutManager);
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        tv_libur.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseMengajar> call, Throwable t) {
+                t.getLocalizedMessage();
+            }
+        });
     }
 
     @Override

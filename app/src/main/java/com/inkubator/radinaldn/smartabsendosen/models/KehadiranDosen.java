@@ -8,6 +8,9 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class KehadiranDosen {
+    public static final String HADIR = "Hadir";
+    public static final String TIDAK_HADIR = "Tidak Hadir";
+
     @SerializedName("nip")
     @Expose
     private String nip;

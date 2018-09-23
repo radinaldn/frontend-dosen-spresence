@@ -10,7 +10,7 @@ import retrofit2.http.Query;
  * Created by radinaldn on 10/08/18.
  */
 
-public interface GoogleApiInterface {
+public interface MyGoogleApiInterface {
     // untuk mendapatkan response dari Google Reverse Geocoding
     @GET("geocode/json")
     Call<ResponseReverseGeocoding> geocodeJson(

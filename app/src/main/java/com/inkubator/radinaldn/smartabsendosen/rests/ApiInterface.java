@@ -6,8 +6,10 @@ import com.inkubator.radinaldn.smartabsendosen.responses.ResponseLogin;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseMengajar;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensi;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensiDetail;
+import com.inkubator.radinaldn.smartabsendosen.responses.ResponseReverseGeocoding;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseRuangan;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseStatusPresensi;
+import com.inkubator.radinaldn.smartabsendosen.responses.ResponseUpdateLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,21 @@ public interface ApiInterface {
     /*
     API Dosen
      */
+
+    // untuk mendapatkan data mengajar hari ini
+    @GET("mengajar/find-all-today-by-nip")
+    Call<ResponseMengajar> mengajarFindAllTodayByNip(
+            @Query("nip") String nip
+    );
+
+    // untuk mengupdate data kehadiran dosen
+    @FormUrlEncoded
+    @POST("dosen/update-location")
+    Call<ResponseUpdateLocation> dosenUpdateLocation(
+            @Field("nip") String nip,
+            @Field("status_kehadiran") String status_kehadiran,
+            @Field("nama_kota") String nama_kota
+    );
 
     // untuk mendapatkan data kehadiran dosen
     @GET("dosen/find-all-by-status-kehadiran")
@@ -83,7 +100,9 @@ public interface ApiInterface {
             @Field("id_mengajar") String id_mengajar,
             @Field("id_ruangan") String id_ruangan,
             @Field("lat") String lat,
-            @Field("lng") String lng
+            @Field("lng") String lng,
+            @Field("nip") String nip,
+            @Field("nama_ruangan") String nama_ruangan
     );
 
     // untuk mengkonfirmasi presensi
@@ -108,4 +127,5 @@ public interface ApiInterface {
             @Field("id_presensi") String id_presensi,
             @Field("nim") String nim
     );
+
 }
