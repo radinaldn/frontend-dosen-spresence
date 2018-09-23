@@ -1,5 +1,6 @@
 package com.inkubator.radinaldn.smartabsendosen.adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,8 @@ public class HistoriMengajarAdapter extends RecyclerView.Adapter<HistoriMengajar
     private static final String TAG = HistoriPresensiAdapter.class.getSimpleName();
     private static final String TAG_ID_PRESENSI = "id_presensi";
     private static final String TAG_STATUS_PRESENSI = "status_presensi";
+    private Context context;
+
 
     ApiInterface apiService;
     public String ID_PRESENSI;
@@ -36,6 +39,11 @@ public class HistoriMengajarAdapter extends RecyclerView.Adapter<HistoriMengajar
 
     public HistoriMengajarAdapter(ArrayList<HistoriMengajar> dataList){
         this.dataList = dataList;
+    }
+
+    public HistoriMengajarAdapter(ArrayList<HistoriMengajar> dataList, Context context){
+        this.dataList = dataList;
+        this.context = context;
     }
 
     @NonNull

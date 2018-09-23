@@ -34,6 +34,19 @@ public interface ApiInterface {
     API Dosen
      */
 
+    // untuk mendapatkan data kehadiran dosen berdasarkan inputan nama
+    @GET("dosen/kehadiran-dosen-find-by-name")
+    Call<ResponseKehadiranDosen> dosenKehadiranFindByName(
+            @Query("name") String name
+    );
+
+    // untuk mendapatkan data perkuliahan by nip dan date
+    @GET("presensi/find-by-nip-and-date")
+    Call<ResponseHistoriMengajar> presensiFindByNipAndDate(
+            @Query("nip") String nip,
+            @Query("date") String date
+    );
+
     // untuk mendapatkan data mengajar hari ini
     @GET("mengajar/find-all-today-by-nip")
     Call<ResponseMengajar> mengajarFindAllTodayByNip(
@@ -108,7 +121,7 @@ public interface ApiInterface {
     // untuk mengkonfirmasi presensi
     @FormUrlEncoded
     @POST("presensi-detail/konfirmasi-all")
-    Call<ResponsePresensiDetail> presensiDetailKonfirmasiAll(
+    Call<ResponseStatusPresensi> presensiDetailKonfirmasiAll(
             @Field("id_presensi") String id_presensi
     );
 
@@ -120,10 +133,26 @@ public interface ApiInterface {
             @Field("nim") String nim
     );
 
+    // untuk membatalkan presensi dan menambah poin tidak hadir
+    @FormUrlEncoded
+    @POST("presensi-detail/batalkan-presensi-dan-tambah-tidak-hadir")
+    Call<ResponsePresensi> presensiDetailBatalkanPresensiDanTambahTidakHadir(
+            @Field("id_presensi") String id_presensi,
+            @Field("nim") String nim
+    );
+
     // untuk menerima presensi
     @FormUrlEncoded
     @POST("presensi-detail/terima-presensi")
     Call<ResponsePresensiDetail> presensiDetailTerimaPresensi(
+            @Field("id_presensi") String id_presensi,
+            @Field("nim") String nim
+    );
+
+    // untuk menerima presensi dan mengurangi poin tidak hadir
+    @FormUrlEncoded
+    @POST("presensi-detail/terima-presensi-dan-kurangi-tidak-hadir")
+    Call<ResponsePresensi> presensiDetailTerimaPresensiDanKurangiTidakHadir(
             @Field("id_presensi") String id_presensi,
             @Field("nim") String nim
     );

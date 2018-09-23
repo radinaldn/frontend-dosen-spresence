@@ -159,7 +159,7 @@ public class HistoriPresensiFragment extends Fragment {
                             swipeRefreshLayout.setRefreshing(false);
                         }
                     } else {
-                        Toast.makeText(getContext(), "Data mahasiswa "+status_kehadiran+" kosong", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "Tidak ada mahasiswa yang "+status_kehadiran, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getContext(), "onResponse error: " +response.errorBody(), Toast.LENGTH_LONG).show();

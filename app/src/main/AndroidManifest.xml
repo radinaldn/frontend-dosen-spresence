@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -22,7 +23,13 @@
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/MyMaterialTheme" />
+            android:theme="@style/MyMaterialTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.MengajarActivity"
             android:label="@string/jadwal_mengajar"
@@ -35,27 +42,24 @@
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/MyMaterialTheme.Base">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.HistoriMengajarActivity"
             android:label="@string/histori_mengajar"
             android:theme="@style/noAnimTheme" />
-
-        <activity android:name=".activities.KehadiranDosenActivity"
+        <activity
+            android:name=".activities.KehadiranDosenActivity"
             android:label="@string/daftar_kehadiran_dosen"
             android:theme="@style/noAnimTheme" />
-
         <activity
             android:name=".activities.ProfileSayaActivity"
             android:label="@string/title_activity_profile_saya"
-            android:theme="@style/MyMaterialTheme"/>
+            android:theme="@style/MyMaterialTheme" />
 
-        <service android:name=".services.ShareLocService"/>
+        <service android:name=".services.ShareLocService" />
+
+        <activity android:name=".activities.HistoriPerkuliahanActivity"></activity>
     </application>
 
 </manifest>

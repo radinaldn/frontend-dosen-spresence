@@ -90,38 +90,42 @@ public class MengajarActivity extends AppCompatActivity {
         criteria.setCostAllowed(true);
         criteria.setPowerRequirement(Criteria.POWER_HIGH);
 
-        Toast.makeText(getApplicationContext(), "Mulai menunggu 10 detik ke depan", Toast.LENGTH_SHORT).show();
+        // Aktifkan untuk mode debugging
+        //Toast.makeText(getApplicationContext(), "Mulai menunggu 10 detik ke depan", Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(getApplicationContext(), "Sedang mendapatkan lokasi ...", Toast.LENGTH_SHORT).show();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //Do something after 10s
-                Toast.makeText(getApplicationContext(), "10 detik berakhir", Toast.LENGTH_SHORT).show();
+
+                // Aktifkan untuk mode debugging
+                //Toast.makeText(getApplicationContext(), "10 detik berakhir", Toast.LENGTH_SHORT).show();
 
                 //jika sudah menunggu dan tidak null
                 if (latittude!=null){
                     if (progressDialog.isShowing()){
                         progressDialog.dismiss();
                     }
-                    Toast.makeText(getApplicationContext(), "lat, lng, alt terbaru berhasil didapatkan, nyalakanScanner()", Toast.LENGTH_SHORT).show();
-//                    nyalakanScanner(latittude, longitude);
+                    Toast.makeText(getApplicationContext(), "Lokasi baru berhasil didapatkan, anda boleh menekan tombol mulai", Toast.LENGTH_SHORT).show();
+
                 } else if (latittude==null){
                     // cek apakah lokasi terakhir yg didapatkan != null
                     if (lastLocation != null){
                         if (progressDialog.isShowing()){
                             progressDialog.dismiss();
                         }
-                        Toast.makeText(getApplicationContext(), "lastLocation berhasil didapatkan, nyalakanScanner()", Toast.LENGTH_SHORT).show();
-//                        nyalakanScanner(String.valueOf(lastLocation.getLatitude()), String.valueOf(lastLocation.getLongitude()));
+                        Toast.makeText(getApplicationContext(), "Lokasi terakhir berhasil didapatkan, nyalakan kamera", Toast.LENGTH_SHORT).show();
+
                         System.out.println("Latitude dari lastLocation : "+lastLocation.getLatitude());
                         System.out.println("Longitude dari lastLocation : "+lastLocation.getLongitude());
                     } else {
-                        Toast.makeText(getApplicationContext(), "lastLocation juga null, coba lagi", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Lokasi tidak berhasil didapatkan, coba lagi", Toast.LENGTH_LONG).show();
                         //   onBackPressed();
-
-
-
-
+                        if (progressDialog.isShowing()){
+                            progressDialog.dismiss();
+                        }
                     }
                 }
 
@@ -145,9 +149,6 @@ public class MengajarActivity extends AppCompatActivity {
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
-
-
 
     }
 
@@ -190,7 +191,8 @@ public class MengajarActivity extends AppCompatActivity {
                             strStatus = "tidak tersedia untuk sementara";
             }
 
-            Toast.makeText(getBaseContext(), provider + " " +strStatus, Toast.LENGTH_SHORT).show();
+            // Aktifkan untuk mode debugging
+            // Toast.makeText(getBaseContext(), provider + " " +strStatus, Toast.LENGTH_SHORT).show();
         }
 
         @Override

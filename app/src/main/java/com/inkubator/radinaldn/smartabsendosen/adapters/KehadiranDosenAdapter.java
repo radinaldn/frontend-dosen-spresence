@@ -51,8 +51,10 @@ public class KehadiranDosenAdapter extends RecyclerView.Adapter<KehadiranDosenAd
     public void onBindViewHolder(@NonNull KehadiranDosenViewHolder holder, int position) {
         Picasso.with(context)
                 .load(ServerConfig.IMAGE_PATH+"dosen/"+dataList.get(position).getFoto())
-                .resize(100,100)
-                .placeholder(R.drawable.businessman)
+                .placeholder(R.drawable.dummy_ava)
+                .error(R.drawable.dummy_ava)
+                .centerCrop()
+                .fit()
                 .into(holder.iv_foto);
         holder.tv_nip.setText(dataList.get(position).getNip());
 

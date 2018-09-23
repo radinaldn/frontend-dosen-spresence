@@ -40,7 +40,7 @@ import retrofit2.Response;
 public class HistoriPresensiActivity extends AppCompatActivity {
 
     public String ID_PRESENSI;
-    public String STATUS_PRESENSI;
+    public String STATUS_PRESENSI, MATAKULIAH, KELAS;
     Button bt_konfirmasi, bt_qrcode;
     private LinearLayout layout_btqrcode_btkonfirmasi;
     Dialog  myDialog;
@@ -53,7 +53,9 @@ public class HistoriPresensiActivity extends AppCompatActivity {
 
     private static final String TAG_ID_PRESENSI = "id_presensi";
     private static final String TAG_STATUS_PRESENSI = "status_presensi";
-    private static final String CLOSE = "close";
+    private static String STATUS = null;
+    private static final String TAG_MATAKULIAH = "matakuliah";
+    private static final String TAG_KELAS = "kelas";
 
     private static final String TAG = HistoriPresensiActivity.class.getSimpleName();
     ApiInterface apiService;
@@ -66,6 +68,8 @@ public class HistoriPresensiActivity extends AppCompatActivity {
         //get Extra from previous Activity
         ID_PRESENSI = getIntent().getStringExtra(TAG_ID_PRESENSI);
         STATUS_PRESENSI = getIntent().getStringExtra(TAG_STATUS_PRESENSI);
+        MATAKULIAH = getIntent().getStringExtra(TAG_MATAKULIAH);
+        KELAS = getIntent().getStringExtra(TAG_KELAS);
 
         bt_qrcode = findViewById(R.id.bt_qrcode);
         bt_konfirmasi = findViewById(R.id.bt_konfirmasi);
@@ -82,6 +86,7 @@ public class HistoriPresensiActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     if(response.body().getStatus().equalsIgnoreCase("200")){
                         String status = response.body().getData();
+                        STATUS = status;
                         System.out.println("status = "+status);
                         if (status.equalsIgnoreCase("open")){
                             layout_btqrcode_btkonfirmasi.setVisibility(View.VISIBLE);
@@ -122,7 +127,7 @@ public class HistoriPresensiActivity extends AppCompatActivity {
                 AlertDialog.Builder confirmBox = new AlertDialog.Builder(HistoriPresensiActivity.this);
                 confirmBox.setTitle("Konfirmasi");
                 confirmBox.setIcon(R.drawable.ic_live_help_black_24dp);
-                confirmBox.setMessage("Anda yakin ingin mengkonfirmasi presensi "+ID_PRESENSI+" ?");
+                confirmBox.setMessage("Anda yakin ingin mengkonfirmasi sekaligus menutup presensi "+MATAKULIAH+" ("+KELAS+") ?");
                 confirmBox.setCancelable(false);
 
                 confirmBox.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
@@ -183,23 +188,27 @@ public class HistoriPresensiActivity extends AppCompatActivity {
 
     private void konfirmasiPresensi(String id_presensi) {
         System.out.println("masuk ke konfirmasiPresensi( "+id_presensi+")");
-        apiService.presensiDetailKonfirmasiAll(id_presensi).enqueue(new Callback<ResponsePresensiDetail>() {
+        apiService.presensiDetailKonfirmasiAll(id_presensi).enqueue(new Callback<ResponseStatusPresensi>() {
             @Override
-            public void onResponse(retrofit2.Call<ResponsePresensiDetail> call, Response<ResponsePresensiDetail> response) {
-                Log.i(TAG, "onResponse: response = "+response);
-                Log.i(TAG, "onResponse: response.body() = "+response.body());
+            public void onResponse(retrofit2.Call<ResponseStatusPresensi> call, Response<ResponseStatusPresensi> response) {
+                Log.i(TAG, "onResponse: response.body() = "+response.toString());
                 if(response.isSuccessful()){
-                    Log.i(TAG, "onResponse: response.body() = "+response.body());
+                    //PERBAIKI HANDLING MESSAGE DISINI
+                    Log.i(TAG, "onResponse: response.body() = "+response.body().toString());
+                    if (response.body().getStatus().equalsIgnoreCase("200")){
+                        Toast.makeText(getApplicationContext(), "Konfirmasi berhasil dan presensi ditutup", Toast.LENGTH_LONG).show();
+                    }
+
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);
                 } else{
-                    Toast.makeText(getApplicationContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(retrofit2.Call<ResponsePresensiDetail> call, Throwable t) {
+            public void onFailure(retrofit2.Call<ResponseStatusPresensi> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "onFailure : "+t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -210,5 +219,10 @@ public class HistoriPresensiActivity extends AppCompatActivity {
         adapter.addFragment(HistoriPresensiFragment.newInstance(ID_PRESENSI, "Hadir"), "Hadir");
         adapter.addFragment(HistoriPresensiFragment.newInstance(ID_PRESENSI, "Tidak Hadir"), "Tidak Hadir");
         viewPager.setAdapter(adapter);
+    }
+
+    // getSTATUS (close/open)
+    public static String getSTATUS(){
+        return STATUS;
     }
 }

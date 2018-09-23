@@ -108,5 +108,11 @@
     <string name="histori_mengajar">Histori Mengajar</string>
     <string name="title_activity_profile_saya">ProfileSayaActivity</string>
     <string name="daftar_kehadiran_dosen">Daftar Kehadiran Dosen</string>
+    <string name="license_app">Smart Absen v1.0\\nCopyright ©INKUBATOR 2018</string>
+    <string name="gps_is_not_activated">GPS belum diaktifkan</string>
+    <string name="do_you_wanna_turn_on_gps">Apakah anda ingin mengaktifkan GPS ? Mengaktifkan GPS akan membantu aplikasi memperoleh lokasi yang akurat.</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="turn_on_gps_first_and_try_again">Aktifkan GPS terlebih dahulu dan coba lagi</string>
 
 </resources>

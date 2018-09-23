@@ -12,9 +12,18 @@ public class ResponsePresensi {
     @SerializedName("status")
     @Expose
     private String status;
+
     @SerializedName("id_presensi")
     @Expose
     private String idPresensi;
+
+    @SerializedName("message")
+    @Expose
+    private String message;
+
+    @SerializedName("code")
+    @Expose
+    private String code;
 
     public String getStatus() {
         return status;
@@ -37,4 +46,19 @@ public class ResponsePresensi {
         this.idPresensi = idPresensi;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

@@ -48,11 +48,11 @@ public class ShareLocService extends Service {
     String latittude, longitude, altitude, bestProvider;
     String nip, status_kehadiran, nama_kota;
 
-    double lowX = 101.355880;
+    double lowY = 0.466900;
 
-    double topX = 101.355960;
-    double lowY = 0.467370;
-    double topY = 0.467420;
+    double topY = 0.468851;
+    double lowX = 101.354667;
+    double topX = 101.356450;
 
     private static final String TAG_NIP = "nip";
     private static final String TAG = ShareLocService.class.getSimpleName();
@@ -111,7 +111,7 @@ public class ShareLocService extends Service {
 
                      if (imInSegment){
                          status_kehadiran = KehadiranDosen.HADIR;
-                         nama_kota = "";
+                         nama_kota = "Fakultas Sains dan Teknologi";
                      } else {
                          status_kehadiran = KehadiranDosen.TIDAK_HADIR;
 

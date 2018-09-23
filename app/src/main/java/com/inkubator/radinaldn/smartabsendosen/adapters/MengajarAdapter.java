@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.activities.HistoriMengajarActivity;
 import com.inkubator.radinaldn.smartabsendosen.activities.HistoriPresensiActivity;
+import com.inkubator.radinaldn.smartabsendosen.activities.MainActivity;
 import com.inkubator.radinaldn.smartabsendosen.activities.MengajarActivity;
 import com.inkubator.radinaldn.smartabsendosen.models.Mengajar;
 import com.inkubator.radinaldn.smartabsendosen.models.Ruangan;
@@ -50,13 +51,17 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
 
     SessionManager sessionManager;
     ApiInterface apiService;
+    String parentActivityName;
 
-    public MengajarAdapter(ArrayList<Mengajar> dataList, Context context) {
+    public MengajarAdapter(ArrayList<Mengajar> dataList, Context context, String parentActivityName) {
         this.dataList = dataList;
         this.mContext = context;
+        this.parentActivityName = parentActivityName;
     }
 
     private static final String TAG_ID_MENGAJAR = "id_mengajar";
+    private static final String TAG_MATAKULIAH = "matakuliah";
+    private static final String TAG_KELAS = "kelas";
 
     @NonNull
     @Override
@@ -99,7 +104,8 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
         public String ID_PRESENSI;
         public final String STATUS_PRESENSI = "open";
 
-        public static final String TAG_OK = "OK";
+        private static final String TAG_OK = "OK";
+        private static final String TAG_FAILED = "FAILED";
 
         AlertDialog alertDialog1;
         final Context context = this.itemView.getContext();
@@ -118,12 +124,23 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
             bt_mulai = itemView.findViewById(R.id.bt_mulai);
             bt_histori = itemView.findViewById(R.id.bt_histori);
 
+            System.out.println("parentActivityName : "+parentActivityName);
+
+            // jika item ditampilkan untuk halaman utama, sembunyikan button mullai
+            if (parentActivityName.equals(MainActivity.TAG)){
+                bt_mulai.setVisibility(View.GONE);
+            } else {
+                bt_mulai.setVisibility(View.VISIBLE);
+            }
+
 
             // ketika matakuliah diklik untuk memulai perkuliahan
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "Anda menekan item "+tv_idmengajar.getText().toString(), Toast.LENGTH_SHORT).show();
+
+                    // Aktifkan untuk mode debugging
+                    //Toast.makeText(itemView.getContext(), "Anda menekan item "+tv_idmengajar.getText().toString(), Toast.LENGTH_SHORT).show();
 
                 }
             });
@@ -157,7 +174,7 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                         bt_mulai.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Toast.makeText(itemView.getContext(), "Aplikasi masih membaca lokasi anda, pastikan GPS sudah diaktifkan.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(itemView.getContext(), "Aplikasi masih membaca lokasi anda, refresh halaman dan pastikan GPS sudah diaktifkan.", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -192,7 +209,10 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                     // arahkan ke Activity history presensi
                     Intent i = new Intent(itemView.getContext(), HistoriMengajarActivity.class);
                     i.putExtra(TAG_ID_MENGAJAR, tv_idmengajar.getText());
-                    Toast.makeText(itemView.getContext(), "ID_MENGAJAR : "+tv_idmengajar.getText(), Toast.LENGTH_SHORT).show();
+
+                    // Aktifkan untuk mode debugging
+                    //Toast.makeText(itemView.getContext(), "ID_MENGAJAR : "+tv_idmengajar.getText(), Toast.LENGTH_SHORT).show();
+
                     itemView.getContext().startActivity(i);
                 }
             });
@@ -258,15 +278,16 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
 
                                 System.out.println("current_lat : "+current_lat);
 
-                                Toast.makeText(itemView.getContext(), "Latitude dari MengajarActivity: "+current_lat+
-                                                "\nLongitude dari MengajarActivity: "+current_lng+
-                                                "\nAltitude dari MengajarActivity: "+current_alt
-                                        , Toast.LENGTH_LONG).show();
+                                // Aktifkan untuk mode debugging
+//                                Toast.makeText(itemView.getContext(), "Latitude dari MengajarActivity: "+current_lat+
+//                                                "\nLongitude dari MengajarActivity: "+current_lng+
+//                                                "\nAltitude dari MengajarActivity: "+current_alt
+//                                        , Toast.LENGTH_LONG).show();
 
                                 if (current_lat == null) {
-                                    Toast.makeText(itemView.getContext(), "Aplikasi sedang membaca lokasi anda, scroll layar ke bawah dan coba lagi.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(itemView.getContext(), "Aplikasi sedang membaca lokasi anda, refresh halaman dan coba lagi.", Toast.LENGTH_LONG).show();
                                 } else {
-                                    presensiAdd(id_mengajar, selectedIdRuangan, current_lat, current_lng, sessionManager.getDosenDetail().get(TAG_NIP), selectedNamaRuangan);
+                                    presensiAdd(id_mengajar, selectedIdRuangan, current_lat, current_lng, sessionManager.getDosenDetail().get(TAG_NIP), selectedNamaRuangan, matakuliah, kelas);
                                 }
 
 
@@ -293,27 +314,29 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
             alertDialog1.show();
         }
 
-        public void presensiAdd(String id_mengajar, String id_ruangan, String lat, String lng, String nip, String nama_ruangan){
+        public void presensiAdd(String id_mengajar, String id_ruangan, String lat, String lng, String nip, String nama_ruangan, final String matakuliah, final String kelas){
+            System.out.println();
             apiService.presensiAdd(id_mengajar, id_ruangan, lat, lng, nip, nama_ruangan).enqueue(new Callback<ResponsePresensi>() {
                 @Override
                 public void onResponse(Call<ResponsePresensi> call, Response<ResponsePresensi> response) {
-                    Log.d(TAG, "onResponse: "+response);
-                    Log.d(TAG, "onResponse presensiAdd response status : "+response.body().getStatus());
-                    Log.d(TAG, "onResponse presensiAdd response id_presensi : "+response.body().getIdPresensi());
+                    System.out.println(response.toString());
                     if(response.isSuccessful()){
-                        if(response.body().getStatus().equalsIgnoreCase(TAG_OK)){
-                            Toast.makeText(context, "PresensiDetail berhasil dibuka, qr-code berhasil di generate, kuliah dah boleh dimulai", Toast.LENGTH_SHORT).show();
+                        if(response.body().getStatus().equals(TAG_OK) || response.body().getStatus().equals(TAG_FAILED)){
+                            Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
 
                             Intent i = new Intent(itemView.getContext(), HistoriPresensiActivity.class);
                             Log.i(TAG, "onResponse: getIdPresensi() : "+response.body().getIdPresensi());
                             i.putExtra(TAG_ID_PRESENSI,response.body().getIdPresensi());
                             i.putExtra(TAG_STATUS_PRESENSI, STATUS_PRESENSI);
+                            i.putExtra(TAG_MATAKULIAH, matakuliah);
+                            i.putExtra(TAG_KELAS, kelas);
                             itemView.getContext().startActivity(i);
                         } else {
-                            Toast.makeText(context, "onResponse error : "+response.body().getStatus(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "onResponse error : "+response.toString(), Toast.LENGTH_LONG).show();
+
                         }
                     } else {
-                        Toast.makeText(context, response.errorBody().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Error memulai presensi", Toast.LENGTH_LONG).show();
                     }
                 }
 

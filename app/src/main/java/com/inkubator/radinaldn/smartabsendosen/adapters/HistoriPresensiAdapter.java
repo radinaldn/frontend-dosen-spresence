@@ -19,8 +19,10 @@ import android.widget.Toast;
 
 import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.activities.HistoriPresensiActivity;
+import com.inkubator.radinaldn.smartabsendosen.activities.MainActivity;
 import com.inkubator.radinaldn.smartabsendosen.config.ServerConfig;
 import com.inkubator.radinaldn.smartabsendosen.models.PresensiDetail;
+import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensi;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensiDetail;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiClient;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiInterface;
@@ -39,6 +41,7 @@ import retrofit2.Response;
 
 public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensiAdapter.HistoriPresensiViewHolder> {
 
+    private static final String TAG_OPEN = "open";
     private Context mContext;
     private ArrayList<PresensiDetail> dataList;
     private static final String TAG = HistoriPresensiAdapter.class.getSimpleName();
@@ -109,7 +112,16 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
         }
 
         holder.tv_proses.setText(dataList.get(position).getProses());
-        Picasso.with(holder.itemView.getContext()).load(ServerConfig.IMAGE_PATH+"mahasiswa/"+dataList.get(position).getFoto_mahasiswa()).resize(100,100).into(holder.iv_avatar);
+
+        Picasso.with(holder.itemView.getContext())
+                .load(ServerConfig.IMAGE_PATH+"mahasiswa/"+dataList.get(position).getFoto_mahasiswa())
+
+                .placeholder(R.drawable.dummy_ava)
+                .error(R.drawable.dummy_ava)
+                .centerCrop()
+                .fit()
+                .into(holder.iv_avatar);
+
         if(dataList.get(position).getProses().equalsIgnoreCase("Pending")){
             holder.iv_proses.setImageResource(R.drawable.ic_on_proggres);
         } else {
@@ -183,7 +195,14 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // lakukan batalkan presensi here
-                                batalkanPresensi(ID_PRESENSI, tv_nim.getText().toString());
+
+                                // jika presensi masih open
+                                if (HistoriPresensiActivity.getSTATUS().equals(TAG_OPEN)){
+                                    batalkanPresensi(ID_PRESENSI, tv_nim.getText().toString());
+                                } else {
+                                    Toast.makeText(mContext, "Status presensi : "+HistoriPresensiActivity.getSTATUS(), Toast.LENGTH_SHORT).show();
+                                    batalkanPresensiDanTambahTidakHadir(ID_PRESENSI, tv_nim.getText().toString());
+                                }
                             }
                         });
                         confirmBox.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
@@ -208,7 +227,15 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // lakukan batalkan presensi here
-                                terimaPresensi(ID_PRESENSI, tv_nim.getText().toString());
+
+                                // jika presensi masih open
+                                if (HistoriPresensiActivity.getSTATUS().equals(TAG_OPEN)){
+                                    terimaPresensi(ID_PRESENSI, tv_nim.getText().toString());
+                                } else {
+                                    Toast.makeText(mContext, "Status presensi : "+HistoriPresensiActivity.getSTATUS(), Toast.LENGTH_SHORT).show();
+                                    terimaPresensiDanKurangiTidakHadir(ID_PRESENSI, tv_nim.getText().toString());
+                                }
+
                             }
                         });
                         confirmBox.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
@@ -252,6 +279,28 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
             });
         }
 
+        private void batalkanPresensiDanTambahTidakHadir(String id_presensi, String nim) {
+            apiService.presensiDetailBatalkanPresensiDanTambahTidakHadir(id_presensi, nim).enqueue(new Callback<ResponsePresensi>() {
+                @Override
+                public void onResponse(Call<ResponsePresensi> call, Response<ResponsePresensi> response) {
+                    if(response.isSuccessful()){
+                        Log.i(TAG, "onResponse: "+response.body());
+                        Toast.makeText(itemView.getContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
+                        Intent intent = ((Activity) itemView.getContext()).getIntent();
+                        ((Activity) itemView.getContext()).finish();
+                        itemView.getContext().startActivity(intent);
+                    } else {
+                        Toast.makeText(itemView.getContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponsePresensi> call, Throwable t) {
+                    Toast.makeText(itemView.getContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
         private void terimaPresensi(String id_presensi, String nim) {
             apiService.presensiDetailTerimaPresensi(id_presensi, nim).enqueue(new Callback<ResponsePresensiDetail>() {
                 @Override
@@ -268,6 +317,29 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
 
                 @Override
                 public void onFailure(Call<ResponsePresensiDetail> call, Throwable t) {
+                    Toast.makeText(itemView.getContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        private void terimaPresensiDanKurangiTidakHadir(String id_presensi, String nim) {
+            apiService.presensiDetailTerimaPresensiDanKurangiTidakHadir(id_presensi, nim).enqueue(new Callback<ResponsePresensi>() {
+                @Override
+                public void onResponse(Call<ResponsePresensi> call, Response<ResponsePresensi> response) {
+                    if(response.isSuccessful()){
+                        Log.i(TAG, "onResponse: "+response.body());
+                        Toast.makeText(itemView.getContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(itemView.getContext(), "Error : "+response.body().getMessage(), Toast.LENGTH_LONG).show();
+                        Intent intent = ((Activity) itemView.getContext()).getIntent();
+                        ((Activity) itemView.getContext()).finish();
+                        itemView.getContext().startActivity(intent);
+                    } else {
+                        Toast.makeText(itemView.getContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponsePresensi> call, Throwable t) {
                     Toast.makeText(itemView.getContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
             });

@@ -124,28 +124,18 @@ public class MengajarFragment extends android.support.v4.app.Fragment {
 
                     if (response.body().getMengajar().size()>0) {
                         mengajarArrayList = new ArrayList<>();
-                        for (int i = 0; i < response.body().getMengajar().size(); i++) {
-                            Log.i(TAG, "onResponse: ada matakuliah hari "+dayname+" :" + response.body().getMengajar().get(i).getNamaMatakuliah());
 
-                            String id_mengajar = response.body().getMengajar().get(i).getIdMengajar();
-                            String nama_kelas = response.body().getMengajar().get(i).getNamaKelas();
-                            String waktu_mulai = response.body().getMengajar().get(i).getWaktuMulai();
-                            String nama_matakuliah = response.body().getMengajar().get(i).getNamaMatakuliah();
-                            String sks = response.body().getMengajar().get(i).getSks();
+                        mengajarArrayList.addAll(response.body().getMengajar());
 
+                        adapter = new MengajarAdapter(mengajarArrayList, getContext(), TAG);
 
-                            mengajarArrayList.add(new Mengajar(id_mengajar, nama_kelas, waktu_mulai, nama_matakuliah, sks));
+                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
 
-                            adapter = new MengajarAdapter(mengajarArrayList, getContext());
+                        recyclerView.setLayoutManager(layoutManager);
 
-                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+                        recyclerView.setAdapter(adapter);
 
-                            recyclerView.setLayoutManager(layoutManager);
-
-                            recyclerView.setAdapter(adapter);
-
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
+                        swipeRefreshLayout.setRefreshing(false);
 
                     } else {
                         Log.i(TAG, "onResponse: tidak ada matakuliah hari "+dayname );

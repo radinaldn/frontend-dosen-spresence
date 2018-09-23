@@ -64,7 +64,8 @@ public class LoginActivity extends AbsRuntimePermission {
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION},
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.RECORD_AUDIO},
                 R.string.msg,REQUEST_PERMISSION);
 
         //init
@@ -72,6 +73,14 @@ public class LoginActivity extends AbsRuntimePermission {
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
         sessionManager = new SessionManager(this);
+
+        if(sessionManager.isLoggedIn()){
+            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+            // agar tidak balik ke activity ini lagi
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(i);
+            finish();
+        }
 
         btlogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,11 +128,11 @@ public class LoginActivity extends AbsRuntimePermission {
                         finish();
 
                     } else {
-                        Toast.makeText(getApplicationContext(), "Gagal login dosen :"+response.body().getStatus(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Gagal login : "+response.body().getStatus(), Toast.LENGTH_SHORT).show();
                     }
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Gagal login dosen :"+response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Gagal login : "+response, Toast.LENGTH_SHORT).show();
                 }
             }
 
