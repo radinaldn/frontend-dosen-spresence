@@ -11,6 +11,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -134,6 +135,10 @@ public class HistoriPresensiActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // lakukan konfirmasi presensi here
+                        bt_konfirmasi.setEnabled(false);
+                        bt_konfirmasi.setText(R.string.loading);
+                        bt_konfirmasi.setTextColor(getResources().getColor(R.color.textColorSecondary));
+                        bt_konfirmasi.setTextColor(getResources().getColor(R.color.textColorPrimaryDisabled));
                         konfirmasiPresensi(ID_PRESENSI);
                     }
                 });
@@ -180,10 +185,27 @@ public class HistoriPresensiActivity extends AppCompatActivity {
 
         tabLayout = findViewById(R.id.tabs_histori_presensi);
 
-        setupViewPager(viewPager);
+        setupViewPager(viewPager, 0);
         tabLayout.setupWithViewPager(viewPager);
+
+
     }
 
+    private void goToMainActivity(){
+        Intent intent = new Intent(HistoriPresensiActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+        finish();
+    }
+
+    public void refreshFragment(long scrollPosition, int tabPosition){
+//        Toast.makeText(getApplicationContext(), "Calling refreshFragment() from fragment", Toast.LENGTH_SHORT).show();
+        setupViewPager(viewPager, scrollPosition);
+        TabLayout.Tab tab = tabLayout.getTabAt(tabPosition);
+        if (tab!=null)
+        tab.select();
+
+    }
 
 
     private void konfirmasiPresensi(String id_presensi) {
@@ -199,9 +221,8 @@ public class HistoriPresensiActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Konfirmasi berhasil dan presensi ditutup", Toast.LENGTH_LONG).show();
                     }
 
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
+                    refreshFragment(0, 0);
+                    layout_btqrcode_btkonfirmasi.setVisibility(View.GONE);
                 } else{
                     //Toast.makeText(getApplicationContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
                 }
@@ -210,14 +231,16 @@ public class HistoriPresensiActivity extends AppCompatActivity {
             @Override
             public void onFailure(retrofit2.Call<ResponseStatusPresensi> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "onFailure : "+t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                t.printStackTrace();
             }
         });
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, long scrollPosition) {
+        viewPager.setAdapter(null);
         HistoriPresensiViewPagerAdapter adapter = new HistoriPresensiViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(HistoriPresensiFragment.newInstance(ID_PRESENSI, "Hadir"), "Hadir");
-        adapter.addFragment(HistoriPresensiFragment.newInstance(ID_PRESENSI, "Tidak Hadir"), "Tidak Hadir");
+        adapter.addFragment(HistoriPresensiFragment.newInstance(ID_PRESENSI, "Hadir", scrollPosition), "Hadir");
+        adapter.addFragment(HistoriPresensiFragment.newInstance(ID_PRESENSI, "Tidak Hadir", scrollPosition), "Tidak Hadir");
         viewPager.setAdapter(adapter);
     }
 

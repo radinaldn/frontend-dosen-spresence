@@ -126,12 +126,23 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
 
             System.out.println("parentActivityName : "+parentActivityName);
 
-            // jika item ditampilkan untuk halaman utama, sembunyikan button mullai
+
             if (parentActivityName.equals(MainActivity.TAG)){
-                bt_mulai.setVisibility(View.GONE);
+                bt_mulai.setVisibility(View.INVISIBLE);
             } else {
                 bt_mulai.setVisibility(View.VISIBLE);
             }
+
+            if(mContext instanceof MengajarActivity){
+                if (((MengajarActivity) mContext).getLatitude().equalsIgnoreCase("0.0")){
+                    setDisabledBtMulai();
+                } else {
+                    setEnabledBtMulai();
+                }
+
+
+            }
+
 
 
             // ketika matakuliah diklik untuk memulai perkuliahan
@@ -145,62 +156,6 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                 }
             });
 
-            // cek apakah Latitude, Longitude dan Altitude == null
-            if(mContext instanceof MengajarActivity) {
-                String current_lat = ((MengajarActivity) mContext).getLatitude();
-                String current_lng = ((MengajarActivity) mContext).getLongitude();
-                String current_alt = ((MengajarActivity) mContext).getAltitude();
-                Location last_location = ((MengajarActivity) mContext).getLastLocation();
-
-                if(current_lat==null){ // jika null
-
-                    if (last_location!=null){
-                        bt_mulai.setBackgroundColor(itemView.getResources().getColor(R.color.colorPrimary));
-                        bt_mulai.setTextColor(itemView.getResources().getColor(R.color.textColorWhite));
-                        // bt_mulai di klik
-                        bt_mulai.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(itemView.getContext(), "Silahkan pilih ruangan perkuliahan", Toast.LENGTH_SHORT).show();
-                                String id_mengajar = tv_idmengajar.getText().toString();
-                                String matakuliah = tv_matakuliah.getText().toString();
-                                String kelas = tv_kelas.getText().toString();
-
-                                showPopUpRuangan(id_mengajar, matakuliah, kelas);
-                            }
-                        });
-                    } else {
-                        bt_mulai.setEnabled(!bt_mulai.isEnabled());
-                        bt_mulai.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Toast.makeText(itemView.getContext(), "Aplikasi masih membaca lokasi anda, refresh halaman dan pastikan GPS sudah diaktifkan.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-
-                } else { // jika tidak
-                    bt_mulai.setBackgroundColor(itemView.getResources().getColor(R.color.colorPrimary));
-                    bt_mulai.setTextColor(itemView.getResources().getColor(R.color.textColorWhite));
-                    // bt_mulai di klik
-                    bt_mulai.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(itemView.getContext(), "Silahkan pilih ruangan perkuliahan", Toast.LENGTH_SHORT).show();
-                            String id_mengajar = tv_idmengajar.getText().toString();
-                            String matakuliah = tv_matakuliah.getText().toString();
-                            String kelas = tv_kelas.getText().toString();
-
-                            showPopUpRuangan(id_mengajar, matakuliah, kelas);
-                        }
-                    });
-                }
-
-                System.out.println("current_lat : " + current_lat);
-                System.out.println("current_lng: " + current_lng);
-                System.out.println("current_alt: " + current_alt);
-            }
 
             // bt_histori di klik
             bt_histori.setOnClickListener(new View.OnClickListener() {
@@ -251,6 +206,31 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
 
         }
 
+        private void setEnabledBtMulai() {
+            bt_mulai.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(itemView.getContext(), "Silahkan pilih ruangan perkuliahan", Toast.LENGTH_SHORT).show();
+                    String id_mengajar = tv_idmengajar.getText().toString();
+                    String matakuliah = tv_matakuliah.getText().toString();
+                    String kelas = tv_kelas.getText().toString();
+
+                    showPopUpRuangan(id_mengajar, matakuliah, kelas);
+                }
+            });
+        }
+
+        private void setDisabledBtMulai() {
+            //bt_mulai.setEnabled(false);
+            bt_mulai.setBackgroundColor(context.getResources().getColor(R.color.textColorPrimaryDisabled));
+            bt_mulai.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MengajarActivity) mContext).showDialogKonfirmasiPindahKeDimanaSayaActivity();
+                }
+            });
+        }
+
         private void showPopUpRuangan(final String id_mengajar, final String matakuliah, final String kelas){
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(this.itemView.getContext());
@@ -274,19 +254,14 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                             if(mContext instanceof MengajarActivity){
                                 String current_lat = ((MengajarActivity) mContext).getLatitude();
                                 String current_lng = ((MengajarActivity) mContext).getLongitude();
-                                String current_alt = ((MengajarActivity) mContext).getAltitude();
 
-                                System.out.println("current_lat : "+current_lat);
 
-                                // Aktifkan untuk mode debugging
-//                                Toast.makeText(itemView.getContext(), "Latitude dari MengajarActivity: "+current_lat+
-//                                                "\nLongitude dari MengajarActivity: "+current_lng+
-//                                                "\nAltitude dari MengajarActivity: "+current_alt
-//                                        , Toast.LENGTH_LONG).show();
+                                if (current_lat.equalsIgnoreCase("0.0")) {
+                                    Toast.makeText(itemView.getContext(), "Aplikasi tidak berhasil mendapatkan lokasi anda."+"\nLat : "+current_lat+"\nLng : "+current_lng, Toast.LENGTH_LONG).show();
 
-                                if (current_lat == null) {
-                                    Toast.makeText(itemView.getContext(), "Aplikasi sedang membaca lokasi anda, refresh halaman dan coba lagi.", Toast.LENGTH_LONG).show();
                                 } else {
+//                                    Toast.makeText(context, "presensiAdd()\nlat : "+current_lat+"\nlng : "+current_lng, Toast.LENGTH_SHORT).show();
+                                    // uncomment agar data dikirim ke rest api
                                     presensiAdd(id_mengajar, selectedIdRuangan, current_lat, current_lng, sessionManager.getDosenDetail().get(TAG_NIP), selectedNamaRuangan, matakuliah, kelas);
                                 }
 

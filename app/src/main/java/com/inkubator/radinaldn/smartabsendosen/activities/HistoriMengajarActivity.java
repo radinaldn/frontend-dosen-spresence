@@ -73,12 +73,21 @@ public class HistoriMengajarActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                goToMainActivity();
             }
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        goToMainActivity();
+    }
 
-
+    private void goToMainActivity(){
+        Intent intent = new Intent(HistoriMengajarActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+        finish();
     }
 
     private void getHistoriMengajar(String idMengajar) {

@@ -74,13 +74,13 @@ public class LoginActivity extends AbsRuntimePermission {
         apiService = ApiClient.getClient().create(ApiInterface.class);
         sessionManager = new SessionManager(this);
 
-        if(sessionManager.isLoggedIn()){
-            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-            // agar tidak balik ke activity ini lagi
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
-            startActivity(i);
-            finish();
-        }
+//        if(sessionManager.isLoggedIn()){
+//            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+//            // agar tidak balik ke activity ini lagi
+//            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+//            startActivity(i);
+//            finish();
+//        }
 
         btlogin.setOnClickListener(new View.OnClickListener() {
             @Override

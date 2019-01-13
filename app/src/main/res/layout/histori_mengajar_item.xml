@@ -121,7 +121,8 @@
                     android:layout_gravity="center_vertical"
                     android:background="@color/colorAccent"
                     android:drawableLeft="@drawable/ic_eye"
-                    android:drawableTint="@color/textColorPrimary"
+
+
                     android:text=" DETAIL"
                     android:textColor="@color/textColorWhite" />
 

@@ -220,6 +220,15 @@ public class ShareLocService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        if (locationManager==null){
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        }
+
+        if (locationListener==null){
+            locationListener = new MyLocationListener();
+        }
+
         locationManager.removeUpdates(locationListener);
         System.out.println("Service telah di Destroy");
         MainActivity.setSwBagikanLokasi(false, ShareLocService.this);

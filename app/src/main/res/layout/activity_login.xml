@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/user"
                     android:drawableTint="@color/colorPrimaryDark"
-                    android:hint="Nip"
+                    android:hint="NIP/NIK"
                     android:inputType="textEmailAddress"
                     android:singleLine="true"
                     android:textColor="#000"/>

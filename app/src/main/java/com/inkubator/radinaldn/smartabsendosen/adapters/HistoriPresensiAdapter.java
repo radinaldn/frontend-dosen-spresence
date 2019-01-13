@@ -21,6 +21,7 @@ import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.activities.HistoriPresensiActivity;
 import com.inkubator.radinaldn.smartabsendosen.activities.MainActivity;
 import com.inkubator.radinaldn.smartabsendosen.config.ServerConfig;
+import com.inkubator.radinaldn.smartabsendosen.fragments.HistoriPresensiFragment;
 import com.inkubator.radinaldn.smartabsendosen.models.PresensiDetail;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensi;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensiDetail;
@@ -43,16 +44,19 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
 
     private static final String TAG_OPEN = "open";
     private Context mContext;
+    private HistoriPresensiFragment fragment;
     private ArrayList<PresensiDetail> dataList;
     private static final String TAG = HistoriPresensiAdapter.class.getSimpleName();
 
     ApiInterface apiService;
 
     public String ID_PRESENSI;
+    private int tabPosition;
 
-    public HistoriPresensiAdapter(ArrayList<PresensiDetail> dataList, Context context) {
+    public HistoriPresensiAdapter(ArrayList<PresensiDetail> dataList, Context context, HistoriPresensiFragment fragment) {
         this.dataList = dataList;
         this.mContext = context;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -100,13 +104,26 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
         holder.tv_jarak.setText(dataList.get(position).getJarak()+" Meter");
         holder.tv_status.setText(dataList.get(position).getStatus());
 
+        int jarak = Integer.parseInt(dataList.get(position).getJarak());
+        if (jarak >0 && jarak <= 50){
+            holder.tv_jarak.setTextColor(mContext.getResources().getColor(R.color.GreenBootstrap));
+        } else if (jarak > 50 && jarak <100) {
+            holder.tv_jarak.setTextColor(mContext.getResources().getColor(R.color.orange));
+        } else if (jarak > 100){
+            holder.tv_jarak.setTextColor(mContext.getResources().getColor(R.color.RedBootstrap));
+        } else {
+            holder.tv_jarak.setTextColor(mContext.getResources().getColor(R.color.colorBlueJeansDark));
+        }
+
         // ubah warna text status kehadiran
         switch (dataList.get(position).getStatus()){
             case "Hadir":
                 holder.tv_status.setBackgroundColor(mContext.getResources().getColor(R.color.GreenBootstrap));
+                tabPosition = 0;
                 break;
             case "Tidak Hadir":
                 holder.tv_status.setBackgroundColor(mContext.getResources().getColor(R.color.RedBootstrap));
+                tabPosition = 1;
                 break;
 
         }
@@ -175,7 +192,9 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                 @Override
                 public void onClick(View v) {
                     // handling for item click
-                    Toast.makeText(itemView.getContext(), "Anda menekan item "+tv_nama_mahasiswa.getText().toString(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(itemView.getContext(), "Anda menekan item "+tv_nama_mahasiswa.getText().toString(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext, "Scroll Position : "+fragment.getRecyclerViewScrollPosition(), Toast.LENGTH_SHORT).show();
+
                 }
             });
 
@@ -200,7 +219,7 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                                 if (HistoriPresensiActivity.getSTATUS().equals(TAG_OPEN)){
                                     batalkanPresensi(ID_PRESENSI, tv_nim.getText().toString());
                                 } else {
-                                    Toast.makeText(mContext, "Status presensi : "+HistoriPresensiActivity.getSTATUS(), Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(mContext, "Status presensi : "+HistoriPresensiActivity.getSTATUS(), Toast.LENGTH_SHORT).show();
                                     batalkanPresensiDanTambahTidakHadir(ID_PRESENSI, tv_nim.getText().toString());
                                 }
                             }
@@ -264,9 +283,7 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                 public void onResponse(Call<ResponsePresensiDetail> call, Response<ResponsePresensiDetail> response) {
                     if(response.isSuccessful()){
                         Log.i(TAG, "onResponse: "+response.body());
-                        Intent intent = ((Activity) itemView.getContext()).getIntent();
-                        ((Activity) itemView.getContext()).finish();
-                        itemView.getContext().startActivity(intent);
+                        fragment.refreshData(fragment.getRecyclerViewScrollPosition(), tabPosition);
                     } else {
                         Toast.makeText(itemView.getContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
                     }
@@ -286,9 +303,7 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                     if(response.isSuccessful()){
                         Log.i(TAG, "onResponse: "+response.body());
                         Toast.makeText(itemView.getContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
-                        Intent intent = ((Activity) itemView.getContext()).getIntent();
-                        ((Activity) itemView.getContext()).finish();
-                        itemView.getContext().startActivity(intent);
+                        fragment.refreshData(fragment.getRecyclerViewScrollPosition(), tabPosition);
                     } else {
                         Toast.makeText(itemView.getContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
                     }
@@ -307,9 +322,8 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                 public void onResponse(Call<ResponsePresensiDetail> call, Response<ResponsePresensiDetail> response) {
                     if(response.isSuccessful()){
                         Log.i(TAG, "onResponse: "+response.body());
-                        Intent intent = ((Activity) itemView.getContext()).getIntent();
-                        ((Activity) itemView.getContext()).finish();
-                        itemView.getContext().startActivity(intent);
+
+                        fragment.refreshData(fragment.getRecyclerViewScrollPosition(), tabPosition);
                     } else {
                         Toast.makeText(itemView.getContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
                     }
@@ -328,11 +342,7 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                 public void onResponse(Call<ResponsePresensi> call, Response<ResponsePresensi> response) {
                     if(response.isSuccessful()){
                         Log.i(TAG, "onResponse: "+response.body());
-                        Toast.makeText(itemView.getContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
-                        Toast.makeText(itemView.getContext(), "Error : "+response.body().getMessage(), Toast.LENGTH_LONG).show();
-                        Intent intent = ((Activity) itemView.getContext()).getIntent();
-                        ((Activity) itemView.getContext()).finish();
-                        itemView.getContext().startActivity(intent);
+                        fragment.refreshData(fragment.getRecyclerViewScrollPosition(), tabPosition);
                     } else {
                         Toast.makeText(itemView.getContext(), "Error : "+response.errorBody(), Toast.LENGTH_LONG).show();
                     }
@@ -343,6 +353,12 @@ public class HistoriPresensiAdapter extends RecyclerView.Adapter<HistoriPresensi
                     Toast.makeText(itemView.getContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
             });
+        }
+
+        private void refreshActivity() {
+            Intent intent = ((Activity) itemView.getContext()).getIntent();
+            ((Activity) itemView.getContext()).finish();
+            itemView.getContext().startActivity(intent);
         }
 
 

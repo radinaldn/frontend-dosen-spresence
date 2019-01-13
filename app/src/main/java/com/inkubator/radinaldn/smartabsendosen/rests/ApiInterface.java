@@ -10,6 +10,7 @@ import com.inkubator.radinaldn.smartabsendosen.responses.ResponseReverseGeocodin
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseRuangan;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseStatusPresensi;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseUpdateLocation;
+import com.inkubator.radinaldn.smartabsendosen.responses.ResponseUpdatePassword;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,15 @@ public interface ApiInterface {
     /*
     API Dosen
      */
+
+    // untuk mengupdate password dosen
+    @FormUrlEncoded
+    @POST("dosen/update-password")
+    Call<ResponseUpdatePassword> dosenUpdatePassword(
+            @Field("nip") String nip,
+            @Field("old_password") String old_password,
+            @Field("new_password") String new_password
+    );
 
     // untuk mendapatkan data kehadiran dosen berdasarkan inputan nama
     @GET("dosen/kehadiran-dosen-find-by-name")

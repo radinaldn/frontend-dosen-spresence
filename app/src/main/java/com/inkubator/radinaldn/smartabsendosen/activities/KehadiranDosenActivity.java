@@ -1,5 +1,6 @@
 package com.inkubator.radinaldn.smartabsendosen.activities;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +35,7 @@ public class KehadiranDosenActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                goToMainActivity();
             }
         });
 
@@ -52,5 +53,12 @@ public class KehadiranDosenActivity extends AppCompatActivity {
         adapter.addFragment(KehadiranDosenFragment.newInstance("Hadir"), "Hadir");
         adapter.addFragment(KehadiranDosenFragment.newInstance("Tidak Hadir"), "Tidak Hadir");
         viewPager.setAdapter(adapter);
+    }
+
+    private void goToMainActivity(){
+        Intent intent = new Intent(KehadiranDosenActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+        finish();
     }
 }

@@ -1,62 +1,56 @@
 package com.inkubator.radinaldn.smartabsendosen.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.os.Handler;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 
-import com.inkubator.radinaldn.smartabsendosen.adapters.MengajarAdapter;
 import com.inkubator.radinaldn.smartabsendosen.adapters.MengajarViewPagerAdapter;
 import com.inkubator.radinaldn.smartabsendosen.fragments.MengajarFragment;
 
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.utils.SessionManager;
 
-import java.util.List;
+import org.ankit.gpslibrary.MyTracker;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class MengajarActivity extends AppCompatActivity {
 
+    private static final long BATAS_MAKS_SESSION_LOCATION = 5; // in minutes
     ProgressDialog progressDialog;
-
-    LocationManager locationManager;
-    LocationListener locationListener;
-    Location lastLocation;
-    String latittude, longitude, altitude, bestProvider;
-    Criteria criteria = new Criteria();
+    MyTracker tracker;
+    Double myLat = 0.0, myLng = 0.0;
+    private ProgressDialog pDialog;
+    SessionManager sessionManager;
 
     /*
     beberapa method untuk dipanggil di adapter
      */
     public String getLatitude(){
-        return latittude;
+        return String.valueOf(myLat);
     }
 
     public String getLongitude(){
-        return longitude;
+        return String.valueOf(myLng);
     }
 
-    public String getAltitude(){
-        return altitude;
-    }
-
-    public Location getLastLocation(){
-        return lastLocation;
+    @Override
+    public void onBackPressed() {
+        goToMainActivity();
     }
 
     // end of
@@ -64,73 +58,30 @@ public class MengajarActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessionManager = new SessionManager(this);
+        tracker=new MyTracker(this);
         setContentView(R.layout.activity_mengajar);
 
-        // for location service
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new MyLocationListener();
+        // jika memiliki last location
+        if(sessionManager.hasLastLocation() && sessionManager.getMyLocationDetail().get(SessionManager.LAST_LOCATED)!=null){
 
-        // start dialog
-        progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Sedang membaca lokasi ...");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.show();
+            String sessDate = sessionManager.getMyLocationDetail().get(SessionManager.LAST_LOCATED);
 
+            // get cur datetime
+            Date currentTime = Calendar.getInstance().getTime();
+            SimpleDateFormat mdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String saatIni = mdformat.format(currentTime);
 
+            long selisihMenit = hitungSelisihMenit(saatIni, sessDate);
 
-        List<String> locationProviders = locationManager.getAllProviders();
-        for (String provider : locationProviders){
-            Log.d("LocationProviders", provider);
+            if (selisihMenit<BATAS_MAKS_SESSION_LOCATION){
+
+                setGunakanLastLocation();
+            }
         }
 
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setAltitudeRequired(true);
-        criteria.setBearingRequired(false);
-        criteria.setCostAllowed(true);
-        criteria.setPowerRequirement(Criteria.POWER_HIGH);
 
-        // Aktifkan untuk mode debugging
-        //Toast.makeText(getApplicationContext(), "Mulai menunggu 10 detik ke depan", Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(getApplicationContext(), "Sedang mendapatkan lokasi ...", Toast.LENGTH_SHORT).show();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after 10s
-
-                // Aktifkan untuk mode debugging
-                //Toast.makeText(getApplicationContext(), "10 detik berakhir", Toast.LENGTH_SHORT).show();
-
-                //jika sudah menunggu dan tidak null
-                if (latittude!=null){
-                    if (progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
-                    Toast.makeText(getApplicationContext(), "Lokasi baru berhasil didapatkan, anda boleh menekan tombol mulai", Toast.LENGTH_SHORT).show();
-
-                } else if (latittude==null){
-                    // cek apakah lokasi terakhir yg didapatkan != null
-                    if (lastLocation != null){
-                        if (progressDialog.isShowing()){
-                            progressDialog.dismiss();
-                        }
-                        Toast.makeText(getApplicationContext(), "Lokasi terakhir berhasil didapatkan, nyalakan kamera", Toast.LENGTH_SHORT).show();
-
-                        System.out.println("Latitude dari lastLocation : "+lastLocation.getLatitude());
-                        System.out.println("Longitude dari lastLocation : "+lastLocation.getLongitude());
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Lokasi tidak berhasil didapatkan, coba lagi", Toast.LENGTH_LONG).show();
-                        //   onBackPressed();
-                        if (progressDialog.isShowing()){
-                            progressDialog.dismiss();
-                        }
-                    }
-                }
-
-            }
-        }, 10000);
 
         Toolbar toolbar = findViewById(R.id.toolbar_mengajar);
         setSupportActionBar(toolbar);
@@ -140,16 +91,71 @@ public class MengajarActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                goToMainActivity();
             }
         });
 
         ViewPager viewPager = findViewById(R.id.viewpager);
+
+
         setupViewPager(viewPager);
 
         TabLayout tabLayout = findViewById(R.id.tabs);
+
+
         tabLayout.setupWithViewPager(viewPager);
 
+        // set hari yg terpilih
+
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        System.out.println("hari ini hari index ke-"+day);
+
+        // max index hari terakhir (jumat), jika fragment+=1 maka max+index_day += 1
+        int max_index_day = 5;
+
+
+        TabLayout.Tab tab = tabLayout.getTabAt(day-2);
+        if (day-1 <= max_index_day && tab!=null){
+            tab.select();
+        }
+
+    }
+
+    public void showDialogKonfirmasiPindahKeDimanaSayaActivity() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Info");
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_my_location);
+        builder.setMessage("Maaf, anda tidak memiliki data riwayat lokasi, silahkan cek lokasi melalui halaman \"Dimana Saya?\".");
+        builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MengajarActivity.this, DimanaSayaActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // new GetMyLocation().execute();
+                dialog.dismiss();
+
+            }
+        });
+
+        builder.create().show();
+    }
+
+    private void setGunakanLastLocation() {
+        String sessionLat = sessionManager.getMyLocationDetail().get(SessionManager.LATITUDE);
+        String sessionLng = sessionManager.getMyLocationDetail().get(SessionManager.LONGITUDE);
+
+        myLat = Double.parseDouble(sessionLat);
+        myLng = Double.parseDouble(sessionLng);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -163,81 +169,123 @@ public class MengajarActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
     }
 
-    private class MyLocationListener implements LocationListener{
+    void getLocation(){
 
-        @Override
-        public void onLocationChanged(Location location) {
-            if (location != null) {
+        myLat = tracker.getLatitude();
+        myLng = tracker.getLongitude();
 
-                latittude = String.valueOf(location.getLatitude());
-                longitude = String.valueOf(location.getLongitude());
-                altitude = String.valueOf(location.getAltitude());
+        System.out.println(tracker.getLatitude());
 
-                if (progressDialog.isShowing()){
-                    progressDialog.dismiss();
+        System.out.println(tracker.getLongitude());
+        System.out.println(tracker.getLocation());
+
+        String latlng = myLat+","+myLng;
+        System.out.println("myLat : "+myLat);
+        System.out.println("myLng : "+myLng);
+
+        if (myLat!=0&&myLng!=0){
+            Toast.makeText(getApplicationContext(), "Berhasil mendapatkan lokasi"+"\nProvider : "+tracker.getLocation().getProvider()+"\nLat : "+myLat+"\nLng : "+myLng, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Tidak bisa dapat lokasi", Toast.LENGTH_LONG).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(false);
+            builder.setTitle("Info");
+            builder.setMessage("Suruh aplikasi membaca lokasi lagi?");
+            builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    new GetMyLocation().execute();
                 }
+            });
+
+            builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    goToMainActivity();
+                }
+            });
+
+            builder.create().show();
+        }
+
+    }
+
+    private void goToMainActivity(){
+        Intent intent = new Intent(MengajarActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+        finish();
+    }
+
+    class GetMyLocation extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+
+            pDialog = new ProgressDialog(MengajarActivity.this);
+            pDialog.setCancelable(false);
+            pDialog.setMessage("Mohon menunggu, sedang mengambil lokasi..");
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            if (tracker==null){
+                tracker = new MyTracker(MengajarActivity.this);
             }
+
+            return null;
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            String strStatus = "";
-            switch (status){
-                case LocationProvider.AVAILABLE:
-                    strStatus = "tersedia";
-                    case LocationProvider.OUT_OF_SERVICE:
-                        strStatus = "sedang dalam perbaikan";
-                        case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                            strStatus = "tidak tersedia untuk sementara";
+        protected void onPostExecute(String file_url) {
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
             }
+            getLocation();
+            // selesaikan activity
 
-            // Aktifkan untuk mode debugging
-            // Toast.makeText(getBaseContext(), provider + " " +strStatus, Toast.LENGTH_SHORT).show();
         }
 
-        @Override
-        public void onProviderEnabled(String provider) {
-            Toast.makeText(getBaseContext(), "Provider: " +provider+ " di-aktifkan", Toast.LENGTH_SHORT).show();
+    }
+
+    private long hitungSelisihMenit(String curDate, String sesDate){
+        String sessLastLocated = sessionManager.getMyLocationDetail().get(SessionManager.LAST_LOCATED);
+
+        Date currentTime = Calendar.getInstance().getTime();
+        SimpleDateFormat mdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date firstDate, secondDate;
+
+        long selisihMenit = 0;
+
+        try {
+            firstDate = mdformat.parse(sesDate);
+            secondDate = mdformat.parse(curDate);
+
+            selisihMenit = secondDate.getTime()-firstDate.getTime();
+
+//                long diffSeconds = selisih / 1000 % 60;
+//                long diffMinutes = selisih / (60 * 1000) % 60;
+//                long diffHours = selisih / (60 * 60 * 1000) % 24;
+//                long diffDays = selisih / (24 * 60 * 60 * 1000);
+
+//                Toast.makeText(getApplicationContext(), diffDays+" hari, "+diffHours+" jam, "+diffMinutes+" menit, "+diffSeconds+" detik", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        @Override
-        public void onProviderDisabled(String provider) {
-            Toast.makeText(getBaseContext(), "Provider: " +provider+ " di-nonaktifkan", Toast.LENGTH_SHORT).show();
-        }
+
+        selisihMenit = selisihMenit / (60 * 1000);
+
+        return selisihMenit;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        bestProvider = locationManager.getBestProvider(criteria, true);
-        Log.d("LocationProviders", "Best provider is : "+bestProvider);
-
-        lastLocation = locationManager.getLastKnownLocation(bestProvider);
-        if (lastLocation != null) Log.d("LocationProviders", lastLocation.toString());
-
-        locationManager.requestLocationUpdates(
-                // aktifkan ambil dari satelit
-                //LocationManager.GPS_PROVIDER,
-                // aktifkan ambil dari BTS
-                //LocationManager.NETWORK_PROVIDER,
-
-                bestProvider,
-                0,
-                0,
-                locationListener
-        );
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        locationManager.removeUpdates(locationListener);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public void btMulaiClick(){
+        // jika hasLastLocation
 
     }
+
 }

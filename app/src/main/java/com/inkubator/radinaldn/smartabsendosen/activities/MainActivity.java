@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     TextView tvname, tvjurusan, tv_libur;;
     private ProgressDialog pDialog;
     private SwitchCompat swbagikanlokasi;
+    NotificationManager nManager;
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private static String NIP;
@@ -90,8 +92,6 @@ public class MainActivity extends AppCompatActivity
     SessionManager sessionManager;
     static SessionManager staticSessionManager;
 
-    boolean isGPSEnabled;
-    LocationManager manager;
 
     // function for set the state of switch (on/off)
     public static void setSwBagikanLokasi(boolean status, Context context){
@@ -116,17 +116,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
-        isGPSEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        Stetho.initializeWithDefaults(this);
 
         sessionManager = new SessionManager(this);
+        Log.d(TAG, "sesionManager.isLoggedIn(): "+sessionManager.isLoggedIn());
 
         if(!sessionManager.isLoggedIn()){
             Intent i = new Intent(MainActivity.this, LoginActivity.class);
@@ -135,6 +127,18 @@ public class MainActivity extends AppCompatActivity
             startActivity(i);
             finish();
         }
+
+        setContentView(R.layout.activity_main);
+
+        nManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        Stetho.initializeWithDefaults(this);
+
+
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
 
@@ -159,36 +163,13 @@ public class MainActivity extends AppCompatActivity
         swbagikanlokasi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //Snackbar.make(v, (swbagikanlokasi.isChecked()) ? "is checked!!!" : "not checked!!!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 if (swbagikanlokasi.isChecked()){
-                    Snackbar.make(v, "Fitur bagikan info kehadiran aktif", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                    sessionManager.setStatusSwitchShareLoc(true);
-
-                    // Tampilkan Simple Notif
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this);
-                    mBuilder.setSmallIcon(R.drawable.help);
-                    mBuilder.setContentTitle("Notification alert, Click me!");
-                    mBuilder.setContentText("Hi, This is Android notification detail!");
-                    mBuilder.setAutoCancel(false);
-
-                    Intent notificationIntent = new Intent(MainActivity.this, KehadiranDosenActivity.class);
-                    PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this, 0, notificationIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-                    mBuilder.setContentIntent(contentIntent);
-
-                    // Add as notification
-                    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    manager.notify(0, mBuilder.build());
-
-                    // jalankan service background
-                    startService(new Intent(MainActivity.this, ShareLocService.class));
+                    jalankanServiceShareLoc(v);
 
                 } else {
-                    Snackbar.make(v, "Fitur bagikan infor kehadiran non-aktif", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                    sessionManager.setStatusSwitchShareLoc(false);
-
-                    // stop service
-                    stopService(new Intent(MainActivity.this, ShareLocService.class));
+                    stopServiceShareLoc(v);
                 }
             }
         });
@@ -412,6 +393,67 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void stopServiceShareLoc(View v) {
+        Snackbar.make(v, "Fitur bagikan info kehadiran non-aktif", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        sessionManager.setStatusSwitchShareLoc(false);
+
+        nManager.cancel(0);
+
+        // beri notif untuk end task app
+        // Tampilkan Simple Notif
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this);
+        mBuilder.setSmallIcon(R.drawable.attend_logo);
+        mBuilder.setContentTitle(getResources().getString(R.string.app_name));
+        mBuilder.setContentText("Fitur masih berjalan, end task app agar berhenti!");
+//        mBuilder.setOngoing(true);
+
+        Intent notificationIntent = new Intent(MainActivity.this, KehadiranDosenActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(contentIntent);
+
+        nManager.notify(1, mBuilder.build());
+        // end of notif end task app
+
+        // stop service
+        stopService(new Intent(MainActivity.this, ShareLocService.class));
+    }
+
+    private void jalankanServiceShareLoc(View v) {
+        Snackbar.make(v, "Fitur bagikan info kehadiran aktif", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        sessionManager.setStatusSwitchShareLoc(true);
+
+        // Tampilkan Simple Notif
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this);
+        mBuilder.setSmallIcon(R.drawable.attend_logo);
+        mBuilder.setContentTitle(getResources().getString(R.string.app_name));
+        mBuilder.setContentText("Share location sedang berjalan!");
+        mBuilder.setOngoing(true);
+
+        Intent notificationIntent = new Intent(MainActivity.this, KehadiranDosenActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(contentIntent);
+
+        // Add as notification
+        nManager.notify(0, mBuilder.build());
+
+        System.out.println("mau menjalanka service...");
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                System.out.println("Service dijalankan...");
+//                startService(new Intent(MainActivity.this, ShareLocService.class));
+//
+//            }
+//        }).start();
+        System.out.println("Service dijalankan...");
+        startService(new Intent(MainActivity.this, ShareLocService.class));
+
+        // jalankan service background
+    }
+
+
     private void getMengajarHariIni(String nip) {
         System.out.println("Ambil data mengajar hari ini");
         apiService.mengajarFindAllTodayByNip(nip).enqueue(new Callback<ResponseMengajar>() {
@@ -426,7 +468,7 @@ public class MainActivity extends AppCompatActivity
                         mengajarArrayList = new ArrayList<>();
                         mengajarArrayList.addAll(response.body().getMengajar());
 
-                        adapter = new MengajarAdapter(mengajarArrayList, getApplicationContext(), TAG);
+                        adapter = new MengajarAdapter(mengajarArrayList, MainActivity.this, TAG);
                         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                         recyclerView.setLayoutManager(layoutManager);
                         recyclerView.setAdapter(adapter);
@@ -497,48 +539,32 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_help) {
 
         } else if (id == R.id.jadwal_mengajar) {
-            // check apakah GPS aktif?
-            isGPSEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            if (!isGPSEnabled) {
 
-                AlertDialog.Builder confirmBox = new AlertDialog.Builder(MainActivity.this);
-                confirmBox.setTitle(R.string.gps_is_not_activated);
-                confirmBox.setIcon(R.drawable.ic_announcement_black_24dp);
-                confirmBox.setMessage(R.string.do_you_wanna_turn_on_gps);
-                confirmBox.setCancelable(false);
+            //showDialogTurnOnGPS();
+            Intent i = new Intent(getApplicationContext(), MengajarActivity.class);
+            startActivity(i);
 
-                confirmBox.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), R.string.turn_on_gps_first_and_try_again, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                confirmBox.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent(getApplicationContext(), MengajarActivity.class);
-                        startActivity(i);
-                    }
-                });
 
-                AlertDialog alertDialogKonfirmasi = confirmBox.create();
-                alertDialogKonfirmasi.show();
-
-            } else {
-                Intent i = new Intent(getApplicationContext(), MengajarActivity.class);
-                startActivity(i);
-            }
-
-        } else if (id ==R.id.histori_saya) {
+        } else if (id == R.id.histori_saya) {
             Intent intent = new Intent(MainActivity.this, HistoriPerkuliahanActivity.class);
             startActivity(intent);
         } else if (id == R.id.kehadiran_dosen) {
             Intent intent = new Intent(MainActivity.this, KehadiranDosenActivity.class);
             startActivity(intent);
 
-        } else if(id == R.id.nav_share_loc) {
+        } else if (id ==R.id.dimana_saya){
+            Intent intent = new Intent(MainActivity.this, DimanaSayaActivity.class);
+            startActivity(intent);
+
+        }else if (id == R.id.nav_share_loc) {
             swbagikanlokasi.setChecked(!swbagikanlokasi.isChecked());
-            Snackbar.make(item.getActionView(), (swbagikanlokasi.isChecked()) ? "is checked!!!" : "not checked!!!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            //Snackbar.make(item.getActionView(), (swbagikanlokasi.isChecked()) ? "is checked!!!" : "not checked!!!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            if (swbagikanlokasi.isChecked()){
+                jalankanServiceShareLoc(item.getActionView());
+
+            } else {
+                stopServiceShareLoc(item.getActionView());
+            }
 
         } else if (id == R.id.nav_pengaturan) {
             Intent intent = new Intent(MainActivity.this, ProfileSayaActivity.class);
@@ -556,6 +582,14 @@ public class MainActivity extends AppCompatActivity
 
             // Setting Icon to Dialog
             alertDialog.setIcon(R.drawable.attend_logo);
+            // Setting OK Button
+
+
+            // Showing Alert Message
+            alertDialog.show();
+        } else if (id == R.id.nav_lapor_bug){
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/radinaldn/"));
+            startActivity(browserIntent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -595,6 +629,9 @@ public class MainActivity extends AppCompatActivity
             tts.stop();
             tts.shutdown();
         }
+
+        // kill notifCompat id=1
+        nManager.cancel(1);
         super.onDestroy();
     }
 }

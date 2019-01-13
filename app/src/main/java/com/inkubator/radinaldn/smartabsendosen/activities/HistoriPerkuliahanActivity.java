@@ -1,5 +1,6 @@
 package com.inkubator.radinaldn.smartabsendosen.activities;
 
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -61,7 +62,7 @@ public class HistoriPerkuliahanActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                goToMainActivity();
             }
         });
 
@@ -84,9 +85,9 @@ public class HistoriPerkuliahanActivity extends AppCompatActivity {
         System.out.println(cur_year+", "+cur_month+", "+cur_day);
 
         // init widget datetimeline
-        timeline.setFirstVisibleDate(cur_year, Calendar.JULY, 1);
+        timeline.setFirstVisibleDate(cur_year, Calendar.JANUARY, 1);
         timeline.setSelectedDate(cur_year, (cur_month-1), cur_day);
-        timeline.setLastVisibleDate(cur_year+1, Calendar.JULY, 1);
+        timeline.setLastVisibleDate(cur_year, Calendar.DECEMBER, 1);
 
         recyclerView = findViewById(R.id.recyclerView);
         swipeRefreshLayout = findViewById(R.id.swipe_activity_agenda);
@@ -120,6 +121,13 @@ public class HistoriPerkuliahanActivity extends AppCompatActivity {
                 refreshUI(nip, date);
             }
         });
+    }
+
+    private void goToMainActivity(){
+        Intent intent = new Intent(HistoriPerkuliahanActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+        finish();
     }
 
     private void refreshUI(String nip, final String date) {

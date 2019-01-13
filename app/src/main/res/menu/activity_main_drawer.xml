@@ -27,6 +27,11 @@
             android:id="@+id/berita"
             android:icon="@drawable/ic_content"
             android:title="Berita Terbaru" />
+        <item
+            android:icon="@drawable/ic_my_location"
+            android:id="@+id/dimana_saya"
+            android:title="Dimana Saya ?"
+            />
     </group>
 
     <item android:title="Lainnya">
@@ -50,6 +55,10 @@
                 android:id="@+id/nav_about"
                 android:icon="@drawable/info"
                 android:title="Tentang" />
+            <item
+                android:id="@+id/nav_lapor_bug"
+                android:icon="@drawable/ic_bug_report"
+                android:title="Laporkan Bug/Error"/>
 
         </menu>
 

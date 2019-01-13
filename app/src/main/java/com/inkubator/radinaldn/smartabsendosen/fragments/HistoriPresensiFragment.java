@@ -52,8 +52,11 @@ public class HistoriPresensiFragment extends Fragment {
     public static final String TAG = HistoriPresensiFragment.class.getSimpleName();
     SessionManager sessionManager;
     private String status;
+    View view;
+    private static long scrollPosition;
+    private int tabPosition = 0;
 
-    public static HistoriPresensiFragment newInstance(String id_presensi, String status_kehadiran) {
+    public static HistoriPresensiFragment newInstance(String id_presensi, String status_kehadiran, long lngScrollPosition) {
 
         ID_PRESENSI = id_presensi;
 
@@ -62,6 +65,7 @@ public class HistoriPresensiFragment extends Fragment {
 
         HistoriPresensiFragment fragment = new HistoriPresensiFragment();
         fragment.setArguments(args);
+        scrollPosition = lngScrollPosition;
         return fragment;
     }
 
@@ -86,19 +90,23 @@ public class HistoriPresensiFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_histori_presensi, container, false);
+        view = inflater.inflate(R.layout.fragment_histori_presensi, container, false);
 
+        // get tabposition
+        if (status.equalsIgnoreCase("Hadir")){
+            tabPosition = 0;
+        } else {
+            tabPosition = 1;
+        }
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_activity_histori_presensi);
         swipeRefreshLayout.setColorSchemeResources(R.color.refresh, R.color.refresh1, R.color.refresh2);
         swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Intent intent = getActivity().getIntent();
-                getActivity().finish();
-                getActivity().startActivity(intent);
+                refreshData(0, tabPosition);
 
             }
         });
@@ -116,6 +124,22 @@ public class HistoriPresensiFragment extends Fragment {
 //        textView.setText(status);
 
         return view;
+    }
+
+    // this method call activity method
+    public void refreshData(long scrollPosition, int tabPosition){
+//        Toast.makeText(getContext(), "Calling refreshData() from adapter", Toast.LENGTH_SHORT).show();
+//        recyclerView.setAdapter(null);
+//        recyclerView.setLayoutManager(null);
+//
+//        getHistoriPresensi(ID_PRESENSI, status);
+        if (getContext() instanceof HistoriPresensiActivity){
+            ((HistoriPresensiActivity)getActivity()).refreshFragment(scrollPosition, tabPosition);
+            System.out.println("scrollPosition : "+scrollPosition);
+            System.out.println("intStatus : "+tabPosition);
+        }
+
+
     }
 
     private void getHistoriPresensi(String id_presensi, final String status_kehadiran) {
@@ -148,13 +172,15 @@ public class HistoriPresensiFragment extends Fragment {
 
 
 
-                            adapter = new HistoriPresensiAdapter(presensiArrayList, getContext());
+                            adapter = new HistoriPresensiAdapter(presensiArrayList, getContext(), HistoriPresensiFragment.this);
 
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
 
                             recyclerView.setLayoutManager(layoutManager);
 
                             recyclerView.setAdapter(adapter);
+                            recyclerView.getLayoutManager().scrollToPosition((int) scrollPosition);
+                            adapter.notifyDataSetChanged();
 
                             swipeRefreshLayout.setRefreshing(false);
                         }
@@ -173,6 +199,12 @@ public class HistoriPresensiFragment extends Fragment {
         });
 
 
+    }
+
+    public long getRecyclerViewScrollPosition(){
+
+        long currentVisiblePosition = 0;
+        return  currentVisiblePosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
     }
 
 

@@ -61,35 +61,33 @@
         <LinearLayout
             android:layout_marginTop="6dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="left">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <Button
                 android:paddingLeft="5dp"
                 android:id="@+id/bt_mulai"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@android:color/darker_gray"
+
+                android:background="@color/colorPrimaryDark"
                 android:drawableLeft="@drawable/ic_check_circle_white"
                 android:text="@string/mulai"
-                android:textColor="@color/textColorWhite" />
+                android:textColor="@color/textColorWhite"
+                android:layout_weight="0.39"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" " />
 
             <Button
+                android:layout_marginLeft="5dp"
                 android:paddingLeft="5dp"
                 android:id="@+id/bt_histori"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:background="@color/colorAccent"
                 android:drawableLeft="@drawable/ic_history_black_24dp"
                 android:text=" Histori"
-                android:textColor="@color/textColorWhite" />
+                android:textColor="@color/textColorWhite"
+                android:layout_weight="0.39"/>
 
         </LinearLayout>
 

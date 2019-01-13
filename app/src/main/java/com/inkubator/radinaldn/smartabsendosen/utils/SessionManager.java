@@ -29,6 +29,11 @@ public class SessionManager {
     public static final String JK = "jk";
     public static final String FOTO = "foto";
 
+    public static final String HAS_LAST_LOCATION = "hasLastLocation";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String LAST_LOCATED = "lastLocated";
+
     public static final String SHARE_LOC_IS_ON = "shareLocIsOn";
 
     public Context get_context(){
@@ -53,6 +58,15 @@ public class SessionManager {
         editor.commit();
     }
 
+    public void createMyLocationSession(String latitude, String longitude, String last_located){
+        editor.putBoolean(HAS_LAST_LOCATION, true);
+        editor.putString(LATITUDE, latitude);
+        editor.putString(LONGITUDE, longitude);
+        editor.putString(LAST_LOCATED, last_located);
+        editor.commit();
+
+    }
+
     public void setStatusSwitchShareLoc(boolean status){
         editor.putBoolean(SHARE_LOC_IS_ON, status);
         editor.commit();
@@ -74,6 +88,14 @@ public class SessionManager {
         return dosen;
     }
 
+    public HashMap<String, String> getMyLocationDetail(){
+        HashMap<String, String> location = new HashMap<>();
+        location.put(LATITUDE, sharedPreferences.getString(LATITUDE, null));
+        location.put(LONGITUDE, sharedPreferences.getString(LONGITUDE, null));
+        location.put(LAST_LOCATED, sharedPreferences.getString(LAST_LOCATED, null));
+        return location;
+    }
+
     public void logoutDosen(){
         editor.clear();
         editor.commit();
@@ -81,5 +103,9 @@ public class SessionManager {
 
     public boolean isLoggedIn(){
         return sharedPreferences.getBoolean(IS_LOGGED_IN, false);
+    }
+
+    public boolean hasLastLocation(){
+        return sharedPreferences.getBoolean(HAS_LAST_LOCATION, false);
     }
 }

@@ -11,6 +11,8 @@
     <color name="textColorWhite">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
+    <color name="buttonColorDisabled">#d7d7d7</color>
+    <color name="HoloOrangeDark">#ffff8800</color>
 
     <color name="textSuccessDark">#4CAF50</color>
     <color name="textSuccess">#FBC02D</color>
