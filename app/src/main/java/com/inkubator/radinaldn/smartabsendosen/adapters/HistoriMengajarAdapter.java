@@ -30,6 +30,8 @@ public class HistoriMengajarAdapter extends RecyclerView.Adapter<HistoriMengajar
     private static final String TAG = HistoriPresensiAdapter.class.getSimpleName();
     private static final String TAG_ID_PRESENSI = "id_presensi";
     private static final String TAG_STATUS_PRESENSI = "status_presensi";
+    private static final String TAG_MATAKULIAH = "matakuliah";
+    private static final String TAG_KELAS = "kelas";
     private Context context;
 
 
@@ -108,6 +110,8 @@ public class HistoriMengajarAdapter extends RecyclerView.Adapter<HistoriMengajar
                     Intent i = new Intent(itemView.getContext(), HistoriPresensiActivity.class);
                     i.putExtra(TAG_ID_PRESENSI, tv_id_presensi.getText());
                     i.putExtra(TAG_STATUS_PRESENSI, STATUS_PRESENSI);
+                    i.putExtra(TAG_MATAKULIAH, tv_matakuliah.getText().toString());
+                    i.putExtra(TAG_KELAS, tv_kelas.getText().toString());
                     itemView.getContext().startActivity(i);
                 }
             });

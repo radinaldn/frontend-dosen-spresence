@@ -6,7 +6,7 @@ package com.inkubator.radinaldn.smartabsendosen.config;
 
 public class ServerConfig {
     //public static final String DOMAIN_SERVER = "http://10.20.227.159/";
-    public static final String DOMAIN_SERVER = "http://192.168.1.103/";
+    public static final String DOMAIN_SERVER = "http://192.168.1.101/";
 //    public static final String DOMAIN_SERVER = "http://192.168.43.217/";
 //    public static final String DOMAIN_SERVER = "https://topapp.id/";
     public static final String SERVER_URL = DOMAIN_SERVER+"smart-presence/api/v1/";

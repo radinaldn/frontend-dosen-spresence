@@ -1,83 +1,80 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:theme="@style/MyMaterialTheme">
 
-        <android.support.design.widget.AppBarLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_histori_presensi"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/MyMaterialTheme"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:titleTextColor="@color/colorWhite" />
+
+
+        <LinearLayout
+            android:id="@+id/layout_btqrcode_btkonfirmasi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/MyMaterialTheme">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar_histori_presensi"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                android:theme="@style/MyMaterialTheme"
-                app:titleTextColor="@color/colorWhite"/>
-
-
-
-            <LinearLayout
-                android:visibility="gone"
-                android:id="@+id/layout_btqrcode_btkonfirmasi"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp">
-                <Button
-                    android:paddingLeft="5dp"
-                    android:layout_weight="0.39"
-                    android:background="@color/textColorWhite"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:id="@+id/bt_konfirmasi"
-
-                    android:layout_gravity="bottom"
-                    android:drawableLeft="@drawable/ic_check_circle_black"
-                    android:text="@string/konfirmasi_presensi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
-
-
-                <Button
-                    android:layout_marginLeft="5dp"
-                    android:paddingLeft="5dp"
-                    android:id="@+id/bt_qrcode"
-                    android:drawableLeft="@drawable/ic_qr_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.39"
-                    android:background="@color/textColorWhite"
-                    android:text="@string/qr_code"
-                    android:textColor="@color/colorPrimaryDark" />
-            </LinearLayout>
-
-
-
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs_histori_presensi"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/MyMaterialTheme"
-                app:tabTextColor="@color/colorSubTitle"
-                app:tabSelectedTextColor="@color/colorWhite"
-                app:tabGravity="fill"
-                app:tabMode="fixed" />
-
-        </android.support.design.widget.AppBarLayout>
-
-
-        <android.support.v4.view.ViewPager
+            android:orientation="horizontal"
             android:padding="5dp"
-            android:id="@+id/viewpager_histori_presensi"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/bt_konfirmasi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="0.39"
+
+                android:background="@color/textColorWhite"
+                android:drawableLeft="@drawable/ic_check_circle_black"
+                android:paddingLeft="5dp"
+                android:text="@string/konfirmasi_presensi"
+                android:textColor="@color/colorPrimaryDark" />
+
+
+            <Button
+                android:id="@+id/bt_qrcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.39"
+                android:background="@color/textColorWhite"
+                android:drawableLeft="@drawable/ic_qr_code"
+                android:paddingLeft="5dp"
+                android:text="@string/qr_code"
+                android:textColor="@color/colorPrimaryDark" />
+        </LinearLayout>
+
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs_histori_presensi"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    </android.support.design.widget.CoordinatorLayout>
+            android:layout_height="wrap_content"
+            android:theme="@style/MyMaterialTheme"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorWhite"
+            app:tabTextColor="@color/colorSubTitle" />
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_histori_presensi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</android.support.design.widget.CoordinatorLayout>
 
 
 

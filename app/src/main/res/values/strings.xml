@@ -13,7 +13,7 @@
     <string name="daftar_mahasiswa">Daftar Mahasiswa</string>
     <string name="konfirmasi_presensi">KONFIRMASI</string>
     <string name="qr_code">QR-CODE</string>
-    <string name="close">Close</string>
+    <string name="tutup">Tutup</string>
     <string name="mulai">Mulai</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="large_text">
@@ -114,11 +114,31 @@
     <string name="yes">Ya</string>
     <string name="no">Tidak</string>
     <string name="turn_on_gps_first_and_try_again">Aktifkan GPS terlebih dahulu dan coba lagi</string>
-    <string name="ubah_password">Ubah password</string>
+    <string name="ubah_password">Ubah kata sandi</string>
     <string name="loading">LOADING…</string>
     <string name="membaca_lokasi">Membaca Lokasi…</string>
     <string name="dimana_saya">Dimana Saya ?</string>
     <string name="simpan_lokasi">Simpan Lokasi</string>
     <string name="MAPS_API_KEY">AIzaSyBHuKQvlibzntuWy52K_Eoix1_MLclUzHA</string>
+    <string name="di_mana_saya">Di mana Saya?</string>
+    <string name="info">Info</string>
+    <string name="nip_nik">NIP/NIK</string>
+    <string name="password">Kata sandi</string>
+    <string name="Masuk">Masuk</string>
+    <string name="mengalami_kendala_laporkan">Mengalami kendala? Laporkan</string>
+    <string name="smart_presence">Smart Presence</string>
+    <string name="mengajar_hari_ini">Mengajar Hari ini</string>
+    <string name="libur_hubungi_kosma_jika_ada_jadwal_kuliah_pengganti">Libur! Hubungi kosma jika ada jadwal kuliah pengganti.</string>
+    <string name="nip">Nip</string>
+    <string name="nama">Nama</string>
+    <string name="imei">Imei</string>
+    <string name="jenis_kelamin">Jenis Kelamin</string>
+    <string name="kata_sandi_lama">Kata sandi lama</string>
+    <string name="kata_sandi_baru">Kata sandi baru</string>
+    <string name="ulangi_kata_sandi_baru">Ulangi kata sandi baru</string>
+    <string name="hadir">Hadir</string>
+    <string name="tidak_hadir">Tidak hadir</string>
+    <string name="detail">DETAIL</string>
+    <string name="histori">Histori</string>
 
 </resources>

@@ -4,117 +4,87 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.ProfileSayaActivity"
-    tools:showIn="@layout/activity_profile_saya"
-    android:padding="@dimen/activity_vertical_margin">
+    tools:showIn="@layout/activity_profile_saya">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
             style="@style/TextSpec.Field"
-            android:text="Info"
-
-            />
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:text="@string/info" />
 
         <TextView
-            android:textSize="18sp"
-            android:text="130517100"
             android:id="@+id/tv_nip"
-            style="@style/TextSpec.Value" />
+            style="@style/TextSpec.Value"
+            android:textSize="18sp"
+            tools:text="130517100" />
 
         <TextView
+            style="@style/TextSpec.Gray"
             android:layout_marginBottom="10dp"
             android:gravity="center"
-            style="@style/TextSpec.Gray"
-            android:text="Nip"
-            />
+            android:text="@string/nip" />
 
         <View
-            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorAccent"
-            />
+            android:layout_marginBottom="10dp"
+            android:background="@color/colorAccent" />
 
         <TextView
-            android:textSize="18sp"
-            android:text="Nazruddin Safaat H"
             android:id="@+id/tv_nama"
-            style="@style/TextSpec.Value" />
+            style="@style/TextSpec.Value"
+            android:textSize="18sp"
+            tools:text="Nazruddin Safaat H" />
 
         <TextView
+            style="@style/TextSpec.Gray"
             android:layout_marginBottom="10dp"
             android:gravity="center"
-            style="@style/TextSpec.Gray"
-            android:text="Nama"
-            />
+            android:text="@string/nama" />
 
         <View
-            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorAccent"
-            />
+            android:layout_marginBottom="10dp"
+            android:background="@color/colorAccent" />
 
         <TextView
-            android:textSize="18sp"
-            android:text="35872635215"
             android:id="@+id/tv_imei"
-            style="@style/TextSpec.Value" />
+            style="@style/TextSpec.Value"
+            android:textSize="18sp"
+            tools:text="35872635215" />
 
         <TextView
+            style="@style/TextSpec.Gray"
             android:layout_marginBottom="10dp"
             android:gravity="center"
-            style="@style/TextSpec.Gray"
-            android:text="Imei"
-            />
+            android:text="@string/imei" />
 
         <View
-            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorAccent"
-            />
-
-        <!--<TextView-->
-            <!--android:textSize="18sp"-->
-            <!--android:text="1078625247"-->
-            <!--android:id="@+id/tv_id_telegram"-->
-            <!--style="@style/TextSpec.Value" />-->
-
-        <!--<TextView-->
-            <!--android:layout_marginBottom="10dp"-->
-            <!--android:gravity="center"-->
-            <!--style="@style/TextSpec.Gray"-->
-            <!--android:text="ID Telegram"-->
-            <!--/>-->
-
-        <!--<View-->
-            <!--android:layout_marginBottom="10dp"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@color/colorAccent"-->
-            <!--/>-->
+            android:layout_marginBottom="10dp"
+            android:background="@color/colorAccent" />
 
         <TextView
-            android:textSize="18sp"
-            android:text="Laki-Laki"
             android:id="@+id/tv_jk"
-            style="@style/TextSpec.Value" />
+            style="@style/TextSpec.Value"
+            android:textSize="18sp"
+            tools:text="Laki-Laki" />
 
         <TextView
+            style="@style/TextSpec.Gray"
             android:layout_marginBottom="10dp"
             android:gravity="center"
-            style="@style/TextSpec.Gray"
-            android:text="Jenis Kelamin"
-            />
-
+            android:text="@string/jenis_kelamin" />
 
 
     </LinearLayout>
