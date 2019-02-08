@@ -11,7 +11,7 @@ import java.util.List;
  * Created by radinaldn on 17/07/18.
  */
 
-public class HistoriPresensiViewPagerAdapter extends FragmentPagerAdapter{
+public class HistoriPresensiViewPagerAdapter extends FragmentPagerAdapter {
 
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
@@ -30,13 +30,13 @@ public class HistoriPresensiViewPagerAdapter extends FragmentPagerAdapter{
         return mFragmentTitleList.size();
     }
 
-    public void addFragment(Fragment fragment, String title){
+    public void addFragment(Fragment fragment, String title) {
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
     }
 
     @Override
-    public CharSequence getPageTitle(int position){
+    public CharSequence getPageTitle(int position) {
         return mFragmentTitleList.get(position);
     }
 }

@@ -3,6 +3,7 @@ package com.inkubator.radinaldn.smartabsendosen.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +48,7 @@ public class ProfileSayaActivity extends AppCompatActivity {
     LayoutInflater inflater;
     View dialogView;
     ApiInterface apiService;
+    private Button btChangeLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +69,17 @@ public class ProfileSayaActivity extends AppCompatActivity {
         tv_nip = findViewById(R.id.tv_nip);
         tv_imei = findViewById(R.id.tv_imei);
         tv_jk = findViewById(R.id.tv_jk);
+        btChangeLanguage = findViewById(R.id.btChangeLanguage);
 
-        Picasso.with(getApplicationContext()).load(ServerConfig.IMAGE_PATH+"/dosen/"+foto).into(iv_foto);
+        btChangeLanguage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mIntent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
+                startActivity(mIntent);
+            }
+        });
+
+        Picasso.with(getApplicationContext()).load(ServerConfig.IMAGE_PATH + "/dosen/" + foto).into(iv_foto);
         tv_nip.setText(nip);
         tv_nama.setText(nama);
         tv_imei.setText(imei);
@@ -98,7 +110,7 @@ public class ProfileSayaActivity extends AppCompatActivity {
         });
     }
 
-    private void goToMainActivity(){
+    private void goToMainActivity() {
         Intent intent = new Intent(ProfileSayaActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
@@ -121,7 +133,7 @@ public class ProfileSayaActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if (id == R.id.ubah_password){
+        if (id == R.id.ubah_password) {
             actionUbahPassword();
         }
 
@@ -143,41 +155,43 @@ public class ProfileSayaActivity extends AppCompatActivity {
 
         alertDialogBuilder
                 .setCancelable(false)
-                .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.simpan), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String old_password = et_old_password.getText().toString();
                         String new_password = et_new_password.getText().toString();
                         String new_password2 = et_new_password2.getText().toString();
 
-                        if (new_password.equals(new_password2)){
+                        if (new_password.equals(new_password2)) {
                             apiService.dosenUpdatePassword(sessionManager.getDosenDetail().get(SessionManager.NIP), old_password, new_password).enqueue(new Callback<ResponseUpdatePassword>() {
                                 @Override
                                 public void onResponse(Call<ResponseUpdatePassword> call, Response<ResponseUpdatePassword> response) {
-                                    if (response.isSuccessful()){
+                                    if (response.isSuccessful()) {
 
-                                        if(response.body().getCode().equalsIgnoreCase("200")){
+                                        if (response.body().getCode().equalsIgnoreCase("200")) {
                                             Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                                             goToMainActivity();
                                         } else {
                                             Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
                                         }
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), getString(R.string.terjadi_kesalahan), Toast.LENGTH_LONG).show();
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<ResponseUpdatePassword> call, Throwable t) {
+                                    Toast.makeText(getApplicationContext(), R.string.gagal_terhubung_ke_server, Toast.LENGTH_LONG).show();
                                     t.getLocalizedMessage();
                                 }
                             });
-                        }
-                        else {
-                            Toast.makeText(getApplicationContext(), "Password baru yang anda masukkan tidak cocok.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), R.string.password_baru_yang_anda_masukkan_tidak_cocok, Toast.LENGTH_LONG).show();
                         }
                     }
                 })
 
-                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.batal, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();

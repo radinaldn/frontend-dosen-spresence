@@ -23,7 +23,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/MAPS_API_KEY"/>
+            android:value="@string/MAPS_API_KEY" />
 
         <activity
             android:name=".activities.LoginActivity"
@@ -65,7 +65,7 @@
         <service android:name=".services.ShareLocService" />
 
         <activity android:name=".activities.HistoriPerkuliahanActivity" />
-        <activity android:name=".activities.DimanaSayaActivity"></activity>
+        <activity android:name=".activities.DimanaSayaActivity"/>
     </application>
 
 </manifest>

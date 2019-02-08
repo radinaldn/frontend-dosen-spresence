@@ -4,21 +4,18 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-
-import com.inkubator.radinaldn.smartabsendosen.adapters.MengajarViewPagerAdapter;
-import com.inkubator.radinaldn.smartabsendosen.fragments.MengajarFragment;
-
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
 import com.inkubator.radinaldn.smartabsendosen.R;
+import com.inkubator.radinaldn.smartabsendosen.adapters.MengajarViewPagerAdapter;
+import com.inkubator.radinaldn.smartabsendosen.fragments.MengajarFragment;
 import com.inkubator.radinaldn.smartabsendosen.utils.SessionManager;
 
 import org.ankit.gpslibrary.MyTracker;
@@ -40,11 +37,11 @@ public class MengajarActivity extends AppCompatActivity {
     /*
     beberapa method untuk dipanggil di adapter
      */
-    public String getLatitude(){
+    public String getLatitude() {
         return String.valueOf(myLat);
     }
 
-    public String getLongitude(){
+    public String getLongitude() {
         return String.valueOf(myLng);
     }
 
@@ -59,11 +56,11 @@ public class MengajarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sessionManager = new SessionManager(this);
-        tracker=new MyTracker(this);
+        tracker = new MyTracker(this);
         setContentView(R.layout.activity_mengajar);
 
         // jika memiliki last location
-        if(sessionManager.hasLastLocation() && sessionManager.getMyLocationDetail().get(SessionManager.LAST_LOCATED)!=null){
+        if (sessionManager.hasLastLocation() && sessionManager.getMyLocationDetail().get(SessionManager.LAST_LOCATED) != null) {
 
             String sessDate = sessionManager.getMyLocationDetail().get(SessionManager.LAST_LOCATED);
 
@@ -74,13 +71,11 @@ public class MengajarActivity extends AppCompatActivity {
 
             long selisihMenit = hitungSelisihMenit(saatIni, sessDate);
 
-            if (selisihMenit<BATAS_MAKS_SESSION_LOCATION){
+            if (selisihMenit < BATAS_MAKS_SESSION_LOCATION) {
 
                 setGunakanLastLocation();
             }
         }
-
-
 
 
         Toolbar toolbar = findViewById(R.id.toolbar_mengajar);
@@ -109,14 +104,14 @@ public class MengajarActivity extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_WEEK);
-        System.out.println("hari ini hari index ke-"+day);
+        System.out.println("hari ini hari index ke-" + day);
 
         // max index hari terakhir (jumat), jika fragment+=1 maka max+index_day += 1
         int max_index_day = 5;
 
 
-        TabLayout.Tab tab = tabLayout.getTabAt(day-2);
-        if (day-1 <= max_index_day && tab!=null){
+        TabLayout.Tab tab = tabLayout.getTabAt(day - 2);
+        if (day - 1 <= max_index_day && tab != null) {
             tab.select();
         }
 
@@ -124,11 +119,11 @@ public class MengajarActivity extends AppCompatActivity {
 
     public void showDialogKonfirmasiPindahKeDimanaSayaActivity() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Info");
+        builder.setTitle(getString(R.string.info));
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_my_location);
-        builder.setMessage("Maaf, anda tidak memiliki data riwayat lokasi, silahkan cek lokasi melalui halaman \"Dimana Saya?\".");
-        builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.maaf_anda_tdk_memilik_riwayat_lokasi_cek_melalui_halaman_dimana_saya);
+        builder.setPositiveButton(getString(R.string.ya), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(MengajarActivity.this, DimanaSayaActivity.class);
@@ -138,7 +133,7 @@ public class MengajarActivity extends AppCompatActivity {
             }
         });
 
-        builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.tidak), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // new GetMyLocation().execute();
@@ -161,15 +156,15 @@ public class MengajarActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
 
         MengajarViewPagerAdapter adapter = new MengajarViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(MengajarFragment.newInstance("Monday"), "Senin");
-        adapter.addFragment(MengajarFragment.newInstance("Tuesday"), "Selasa");
-        adapter.addFragment(MengajarFragment.newInstance("Wednesday"), "Rabu");
-        adapter.addFragment(MengajarFragment.newInstance("Thursday"), "Kamis");
-        adapter.addFragment(MengajarFragment.newInstance("Friday"), "Jumat");
+        adapter.addFragment(MengajarFragment.newInstance("Monday"), getString(R.string.senin));
+        adapter.addFragment(MengajarFragment.newInstance("Tuesday"), getString(R.string.selasa));
+        adapter.addFragment(MengajarFragment.newInstance("Wednesday"), getString(R.string.rabu));
+        adapter.addFragment(MengajarFragment.newInstance("Thursday"), getString(R.string.kamis));
+        adapter.addFragment(MengajarFragment.newInstance("Friday"), getString(R.string.jumat));
         viewPager.setAdapter(adapter);
     }
 
-    void getLocation(){
+    void getLocation() {
 
         myLat = tracker.getLatitude();
         myLng = tracker.getLongitude();
@@ -179,26 +174,27 @@ public class MengajarActivity extends AppCompatActivity {
         System.out.println(tracker.getLongitude());
         System.out.println(tracker.getLocation());
 
-        String latlng = myLat+","+myLng;
-        System.out.println("myLat : "+myLat);
-        System.out.println("myLng : "+myLng);
+        String latlng = myLat + "," + myLng;
+        System.out.println("myLat : " + myLat);
+        System.out.println("myLng : " + myLng);
 
-        if (myLat!=0&&myLng!=0){
-            Toast.makeText(getApplicationContext(), "Berhasil mendapatkan lokasi"+"\nProvider : "+tracker.getLocation().getProvider()+"\nLat : "+myLat+"\nLng : "+myLng, Toast.LENGTH_LONG).show();
+        if (myLat != 0 && myLng != 0) {
+//            Toast.makeText(getApplicationContext(), "Berhasil mendapatkan lokasi"+"\nProvider : "+tracker.getLocation().getProvider()+"\nLat : "+myLat+"\nLng : "+myLng, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.berhasil_mendapatkan_lokasi, Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(getApplicationContext(), "Tidak bisa dapat lokasi", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.tidak_bisa_mendapatkan_lokasi, Toast.LENGTH_LONG).show();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);
-            builder.setTitle("Info");
-            builder.setMessage("Suruh aplikasi membaca lokasi lagi?");
-            builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+            builder.setTitle(getString(R.string.info));
+            builder.setMessage(R.string.suruh_aplikasi_membaca_lokasi_lagi);
+            builder.setPositiveButton(getString(R.string.ya), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     new GetMyLocation().execute();
                 }
             });
 
-            builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.tidak), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     goToMainActivity();
@@ -210,7 +206,7 @@ public class MengajarActivity extends AppCompatActivity {
 
     }
 
-    private void goToMainActivity(){
+    private void goToMainActivity() {
         Intent intent = new Intent(MengajarActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
@@ -224,14 +220,14 @@ public class MengajarActivity extends AppCompatActivity {
 
             pDialog = new ProgressDialog(MengajarActivity.this);
             pDialog.setCancelable(false);
-            pDialog.setMessage("Mohon menunggu, sedang mengambil lokasi..");
+            pDialog.setMessage(getString(R.string.mohon_menunggu_sedang_mengambil_lokasi));
             pDialog.show();
         }
 
         @Override
         protected String doInBackground(String... params) {
 
-            if (tracker==null){
+            if (tracker == null) {
                 tracker = new MyTracker(MengajarActivity.this);
             }
 
@@ -250,7 +246,7 @@ public class MengajarActivity extends AppCompatActivity {
 
     }
 
-    private long hitungSelisihMenit(String curDate, String sesDate){
+    private long hitungSelisihMenit(String curDate, String sesDate) {
         String sessLastLocated = sessionManager.getMyLocationDetail().get(SessionManager.LAST_LOCATED);
 
         Date currentTime = Calendar.getInstance().getTime();
@@ -264,7 +260,7 @@ public class MengajarActivity extends AppCompatActivity {
             firstDate = mdformat.parse(sesDate);
             secondDate = mdformat.parse(curDate);
 
-            selisihMenit = secondDate.getTime()-firstDate.getTime();
+            selisihMenit = secondDate.getTime() - firstDate.getTime();
 
 //                long diffSeconds = selisih / 1000 % 60;
 //                long diffMinutes = selisih / (60 * 1000) % 60;
@@ -283,7 +279,7 @@ public class MengajarActivity extends AppCompatActivity {
         return selisihMenit;
     }
 
-    public void btMulaiClick(){
+    public void btMulaiClick() {
         // jika hasLastLocation
 
     }

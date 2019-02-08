@@ -9,6 +9,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GOOGLE_API_KEY", '"AIzaSyABTxpRVD2u_czfqMX7bb6H_WYBxbeXvC4"')
+        buildConfigField("String", "DOMAIN_SERVER", '"http://192.168.1.101/"')
+//        buildConfigField("String", "DOMAIN_SERVER", '"https://topapp.id/"')
     }
     buildTypes {
         release {

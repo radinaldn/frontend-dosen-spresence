@@ -141,12 +141,14 @@ public class MengajarFragment extends android.support.v4.app.Fragment {
                         Log.i(TAG, "onResponse: tidak ada matakuliah hari "+dayname );
                     }
                 } else {
+                    Toast.makeText(getContext(), getContext().getString(R.string.terjadi_kesalahan), Toast.LENGTH_LONG).show();
                     Log.e(TAG, "onResponse error : "+ response.errorBody());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseMengajar> call, Throwable t) {
+                Toast.makeText(getContext(), getContext().getString(R.string.gagal_terhubung_ke_server), Toast.LENGTH_LONG).show();
                 t.printStackTrace();
             }
         });

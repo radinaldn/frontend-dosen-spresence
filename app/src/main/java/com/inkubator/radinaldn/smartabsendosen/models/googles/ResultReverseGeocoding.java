@@ -4,9 +4,10 @@ package com.inkubator.radinaldn.smartabsendosen.models.googles;
  * Created by radinaldn on 10/08/18.
  */
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class ResultReverseGeocoding {
 

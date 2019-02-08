@@ -2,7 +2,6 @@ package com.inkubator.radinaldn.smartabsendosen.responses;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.inkubator.radinaldn.smartabsendosen.models.Mengajar;
 import com.inkubator.radinaldn.smartabsendosen.models.PresensiDetail;
 
 import java.util.List;
@@ -19,8 +18,8 @@ public class ResponsePresensiDetail {
     @Expose
     private List<PresensiDetail> presensiDetail = null;
 
-    public ResponsePresensiDetail(List<PresensiDetail> presensiDetail){
-        this.presensiDetail= presensiDetail;
+    public ResponsePresensiDetail(List<PresensiDetail> presensiDetail) {
+        this.presensiDetail = presensiDetail;
     }
 
     public List<PresensiDetail> getPresensiDetail() {

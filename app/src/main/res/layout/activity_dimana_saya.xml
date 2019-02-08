@@ -38,7 +38,7 @@
             android:background="@color/colorPrimaryDark"
             android:drawableLeft="@drawable/ic_gps_fixed_white"
             android:drawablePadding="5dp"
-            android:text="@string/di_mana_saya"
+            android:text="@string/dimana_saya"
             android:textColor="@android:color/white" />
 
         <Button

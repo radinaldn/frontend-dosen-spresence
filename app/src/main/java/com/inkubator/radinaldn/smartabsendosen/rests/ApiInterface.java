@@ -6,24 +6,17 @@ import com.inkubator.radinaldn.smartabsendosen.responses.ResponseLogin;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseMengajar;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensi;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensiDetail;
-import com.inkubator.radinaldn.smartabsendosen.responses.ResponseReverseGeocoding;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseRuangan;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseStatusPresensi;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseUpdateLocation;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseUpdatePassword;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
-import retrofit2.http.QueryMap;
 
 /**
  * Created by radinaldn on 06/07/18.

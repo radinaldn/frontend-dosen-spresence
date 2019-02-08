@@ -8,18 +8,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.DrawableRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.test.mock.MockPackageManager;
 import android.view.View;
@@ -41,13 +39,9 @@ import com.inkubator.radinaldn.smartabsendosen.utils.SessionManager;
 
 import org.ankit.gpslibrary.MyTracker;
 
-import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
 
@@ -86,24 +80,23 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
         btDimanaSaya.setOnClickListener(this);
 
         parentLayout = findViewById(android.R.id.content);
-        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         isGPSEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
 
 
         // Do Runtime Permission
         try {
-            if(ActivityCompat.checkSelfPermission(this, mPermission)
+            if (ActivityCompat.checkSelfPermission(this, mPermission)
                     != MockPackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this, new String[]{mPermission, Manifest.permission.READ_PHONE_STATE},
                         REQUEST_CODE_PERMISSION);
             } else {
                 // read location
-                if (isMockSettingsON(DimanaSayaActivity.this)){
+                if (isMockSettingsON(DimanaSayaActivity.this)) {
                     showSnacMockLoc();
                 } else {
-                    if (!isGPSEnabled){
+                    if (!isGPSEnabled) {
                         showDialogTurnOnGPS();
                     } else {
                         new GetMyLocation().execute();
@@ -111,12 +104,12 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
                 }
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         // print last loc into textview
-        if (sessionManager.hasLastLocation()){
+        if (sessionManager.hasLastLocation()) {
             showSessionLocation();
         }
 
@@ -139,19 +132,19 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     private void showSnacMockLoc() {
-        Snackbar.make(parentLayout, "Mohon non-aktifkan Fitur Lokasi Tiruan", Snackbar.LENGTH_LONG).setAction("Buka Pengaturan", new View.OnClickListener() {
+        Snackbar.make(parentLayout, R.string.nohon_non_aktifkan_fitur_lokasi_tiruan, Snackbar.LENGTH_LONG).setAction("Buka Pengaturan", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+                startActivity(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
             }
         }).show();
     }
 
-    private void showSnackAutoDate(){
-        Snackbar.make(parentLayout, "Mohon aktifkan Tanggal dan Waktu otomatis", Snackbar.LENGTH_LONG).setAction("Buka Pengaturan", new View.OnClickListener() {
+    private void showSnackAutoDate() {
+        Snackbar.make(parentLayout, R.string.mohon_aktifkan_tanggal_dan_waktu_otomatis, Snackbar.LENGTH_LONG).setAction("Buka Pengaturan", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS), 0);
+                startActivityForResult(new Intent(Settings.ACTION_DATE_SETTINGS), 0);
 
             }
         }).show();
@@ -168,16 +161,17 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
 
         long selisih = hitungSelisihMenit(saatIni, sessDate);
 
-        if (selisih>5) {
-            tvLastLoc.setText("Update : "+sessDate+" (Tidak Berlaku)\n*Riwayat lokasi hanya berlaku untuk "+BATAS_MAKS_SESSION_LOCATION+" menit.");
+        if (selisih > 5) {
+            tvLastLoc.setText(getString(R.string.update) + sessDate + getString(R.string.tidak_berlaku) + BATAS_MAKS_SESSION_LOCATION + getString(R.string.menit));
             tvLastLoc.setTextColor(getResources().getColor(R.color.RedBootstrap));
         } else {
-            tvLastLoc.setText("Update : "+sessDate+" (Berlaku)\n*Riwayat lokasi hanya berlaku untuk "+BATAS_MAKS_SESSION_LOCATION+" menit.");
-            tvLastLoc.setTextColor(getResources().getColor(R.color.GreenBootstrap)); }
+            tvLastLoc.setText(getString(R.string.update) + sessDate + getString(R.string.berlaku) + BATAS_MAKS_SESSION_LOCATION + getString(R.string.menit));
+            tvLastLoc.setTextColor(getResources().getColor(R.color.GreenBootstrap));
+        }
 
     }
 
-    private void goToMainActivity(){
+    private void goToMainActivity() {
         Intent intent = new Intent(DimanaSayaActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
@@ -193,34 +187,34 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
     public void onClick(View v) {
         int id = v.getId();
 
-        if(id == R.id.btDimanaSaya){
+        if (id == R.id.btDimanaSaya) {
             // located me
-            if (isMockSettingsON(this)){
+            if (isMockSettingsON(this)) {
                 showSnacMockLoc();
             } else {
                 new GetMyLocation().execute();
             }
 
-        } else if(id==R.id.btSimpanLokasi) {
+        } else if (id == R.id.btSimpanLokasi) {
             // save my current position
-            if (isMockSettingsON(this)){
+            if (isMockSettingsON(this)) {
                 showSnacMockLoc();
-            } else if (canGetLocation && !isMockSettingsON(this)){
-                if(latLng!=null &&latLng.latitude!=0){
+            } else if (canGetLocation && !isMockSettingsON(this)) {
+                if (latLng != null && latLng.latitude != 0) {
                     String strMyLat = String.valueOf(latLng.latitude);
                     String strMyLng = String.valueOf(latLng.longitude);
 
                     // check apakah waktu di set manual oleh user yang terlalu kreatif
 
                     // utk android API 17 keatas
-                    if (isAutoDateTimeSettingsON(this)){
+                    if (isAutoDateTimeSettingsON(this)) {
                         sessionManager.createMyLocationSession(strMyLat, strMyLng, saatIni);
                         showSessionLocation();
                     } else {
                         showSnackAutoDate();
                     }
 
-                    Toast.makeText(getApplicationContext(), "Lokasi berhasil disimpan, silahkan klik tombol mulai.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.lokasi_berhasil_disimpan, Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(getApplicationContext(), MengajarActivity.class);
                     startActivity(i);
 
@@ -231,7 +225,7 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
-    void getLocation(){
+    void getLocation() {
 
         latLng = new LatLng(tracker.getLatitude(), tracker.getLongitude());
 
@@ -241,7 +235,7 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
         System.out.println(tracker.getLocation());
 
 
-        if (tracker.canGetLocation()&&tracker.getLatitude()!=0){
+        if (tracker.canGetLocation() && tracker.getLatitude() != 0) {
             canGetLocation = true;
 
             // change button simpan state
@@ -256,9 +250,9 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
 
             latLng = new LatLng(tracker.getLatitude(), tracker.getLongitude());
 
-            if (isAutoDateTimeSettingsON(this)){
+            if (isAutoDateTimeSettingsON(this)) {
                 moveMarker(latLng.latitude, latLng.longitude);
-                Toast.makeText(getApplicationContext(), "Marker dipindahkan dengan : "+tracker.getLocation().getProvider()+"\nmyLat : "+tracker.getLatitude()+"\nmyLng : "+tracker.getLongitude(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), getString(R.string.marker_dipindahkan_dengan) + tracker.getLocation().getProvider() + "\nmyLat : " + tracker.getLatitude() + "\nmyLng : " + tracker.getLongitude(), Toast.LENGTH_LONG).show();
             } else {
                 showSnackAutoDate();
             }
@@ -272,14 +266,14 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
             btSimpanLokasi.setBackgroundColor(getResources().getColor(R.color.buttonColorDisabled));
             btSimpanLokasi.setText(getResources().getString(R.string.membaca_lokasi));
 
-            Toast.makeText(getApplicationContext(), "Tidak bisa dapat lokasi", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.tidak_bisa_dapat_lokasi, Toast.LENGTH_LONG).show();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Info");
-            builder.setMessage("Suruh aplikasi membaca lokasi lagi?");
-            builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+            builder.setTitle(getString(R.string.info));
+            builder.setMessage(R.string.suruh_aplikasi_membaca_lokasi_lagi);
+            builder.setPositiveButton(R.string.ya, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if (isMockSettingsON(DimanaSayaActivity.this)){
+                    if (isMockSettingsON(DimanaSayaActivity.this)) {
                         showSnacMockLoc();
                     } else {
                         new GetMyLocation().execute();
@@ -287,7 +281,7 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
                 }
             });
 
-            builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.tidak, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     goToMainActivity();
@@ -300,16 +294,14 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
 
     private void moveMarker(double latitude, double longitude) {
 
-        if (myMarker!=null) myMarker.remove();
+        if (myMarker != null) myMarker.remove();
 
         Date currentTime = Calendar.getInstance().getTime();
         SimpleDateFormat mdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         saatIni = mdformat.format(currentTime);
 
-        BitmapDescriptor customIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker);
-
         myMarker = mMap.addMarker(new
-                MarkerOptions().position(new LatLng(latitude, longitude)).title("Posisi saya").snippet("Update : "+saatIni).icon(bitmapDescriptorFromVector(this, R.drawable.ic_map_marker)));
+                MarkerOptions().position(new LatLng(latitude, longitude)).title(getString(R.string.posisi_saya)).snippet(getString(R.string.update) + saatIni).icon(bitmapDescriptorFromVector(this, R.drawable.ic_map_marker)));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude)));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(15));
@@ -325,16 +317,16 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
             return true;
     }
 
-    public static boolean isAutoDateTimeSettingsON(Context context){
+    public static boolean isAutoDateTimeSettingsON(Context context) {
         // returns true if auto date time settings enabled, false if not enabled.
-        if (Build.VERSION.SDK_INT > 16){
-            if (android.provider.Settings.Global.getInt(context.getContentResolver(), android.provider.Settings.Global.AUTO_TIME, 0)==1){
+        if (Build.VERSION.SDK_INT > 16) {
+            if (android.provider.Settings.Global.getInt(context.getContentResolver(), android.provider.Settings.Global.AUTO_TIME, 0) == 1) {
                 return true;
             } else {
                 return false;
             }
         } else {
-            if (android.provider.Settings.System.getInt(context.getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0)==1){
+            if (android.provider.Settings.System.getInt(context.getContentResolver(), android.provider.Settings.System.AUTO_TIME, 0) == 1) {
                 return true;
             } else {
                 return false;
@@ -349,14 +341,14 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
 
             pDialog = new ProgressDialog(DimanaSayaActivity.this);
             pDialog.setCancelable(false);
-            pDialog.setMessage("Mohon menunggu, sedang mengambil lokasi..");
+            pDialog.setMessage(getString(R.string.mohon_menunggu_sedang_mengambil_lokasi));
             pDialog.show();
         }
 
         @Override
         protected String doInBackground(String... params) {
 
-            if (tracker==null){
+            if (tracker == null) {
                 tracker = new MyTracker(DimanaSayaActivity.this);
             }
 
@@ -376,7 +368,7 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
 
     }
 
-    private long hitungSelisihMenit(String curDate, String sesDate){
+    private long hitungSelisihMenit(String curDate, String sesDate) {
         String sessLastLocated = sessionManager.getMyLocationDetail().get(SessionManager.LAST_LOCATED);
 
         Date currentTime = Calendar.getInstance().getTime();
@@ -390,7 +382,7 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
             firstDate = mdformat.parse(sesDate);
             secondDate = mdformat.parse(curDate);
 
-            selisihMenit = secondDate.getTime()-firstDate.getTime();
+            selisihMenit = secondDate.getTime() - firstDate.getTime();
 
 //                long diffSeconds = selisih / 1000 % 60;
 //                long diffMinutes = selisih / (60 * 1000) % 60;
@@ -420,29 +412,29 @@ public class DimanaSayaActivity extends AppCompatActivity implements OnMapReadyC
 
     private void showDialogTurnOnGPS() {
         // check apakah GPS aktif?
-            AlertDialog.Builder confirmBox = new AlertDialog.Builder(DimanaSayaActivity.this);
-            confirmBox.setTitle(R.string.gps_is_not_activated);
-            confirmBox.setIcon(R.drawable.ic_announcement_black_24dp);
-            confirmBox.setMessage(R.string.do_you_wanna_turn_on_gps);
-            confirmBox.setCancelable(false);
+        AlertDialog.Builder confirmBox = new AlertDialog.Builder(DimanaSayaActivity.this);
+        confirmBox.setTitle(R.string.gps_is_not_activated);
+        confirmBox.setIcon(R.drawable.ic_announcement_black_24dp);
+        confirmBox.setMessage(R.string.do_you_wanna_turn_on_gps);
+        confirmBox.setCancelable(false);
 
-            confirmBox.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(i);
-                }
-            });
-            confirmBox.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(i);
-                }
-            });
+        confirmBox.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(i);
+            }
+        });
+        confirmBox.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(i);
+            }
+        });
 
-            AlertDialog alertDialogKonfirmasi = confirmBox.create();
-            alertDialogKonfirmasi.show();
+        AlertDialog alertDialogKonfirmasi = confirmBox.create();
+        alertDialogKonfirmasi.show();
 
     }
 }

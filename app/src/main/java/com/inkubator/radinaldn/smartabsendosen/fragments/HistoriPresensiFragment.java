@@ -1,7 +1,5 @@
 package com.inkubator.radinaldn.smartabsendosen.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,16 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.activities.HistoriPresensiActivity;
 import com.inkubator.radinaldn.smartabsendosen.adapters.HistoriPresensiAdapter;
-import com.inkubator.radinaldn.smartabsendosen.adapters.MengajarAdapter;
-import com.inkubator.radinaldn.smartabsendosen.models.Mengajar;
 import com.inkubator.radinaldn.smartabsendosen.models.PresensiDetail;
-import com.inkubator.radinaldn.smartabsendosen.responses.ResponseMengajar;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponsePresensiDetail;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiClient;
 import com.inkubator.radinaldn.smartabsendosen.rests.ApiInterface;
@@ -42,8 +36,8 @@ public class HistoriPresensiFragment extends Fragment {
     private RecyclerView recyclerView;
     private HistoriPresensiAdapter adapter;
     private ArrayList<PresensiDetail> presensiArrayList;
-    private static final String ARG_STATUS= "status";
-    private static final String TAG_NIM= "nim";
+    private static final String ARG_STATUS = "status";
+    private static final String TAG_NIM = "nim";
     public static String ID_PRESENSI;
 
     ApiInterface apiService;
@@ -93,7 +87,7 @@ public class HistoriPresensiFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_histori_presensi, container, false);
 
         // get tabposition
-        if (status.equalsIgnoreCase("Hadir")){
+        if (status.equalsIgnoreCase("Hadir")) {
             tabPosition = 0;
         } else {
             tabPosition = 1;
@@ -103,7 +97,7 @@ public class HistoriPresensiFragment extends Fragment {
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_activity_histori_presensi);
         swipeRefreshLayout.setColorSchemeResources(R.color.refresh, R.color.refresh1, R.color.refresh2);
-        swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshData(0, tabPosition);
@@ -112,31 +106,20 @@ public class HistoriPresensiFragment extends Fragment {
         });
 
         getHistoriPresensi(ID_PRESENSI, status);
-//        presensiArrayList = new ArrayList<>();
-//        presensiArrayList.add(new PresensiDetail("1", "11451101637", "Radinal Dwiki N", status, "0", "0", "2018-07-18 08:18:00", "10", "Pending"));
-//        presensiArrayList.add(new PresensiDetail("2", "11451101638", "Radinul Dwiki N", status, "0", "0", "2018-07-18 08:18:00", "10", "Pending"));
-
-
-
-
-//        TextView textView = view.findViewById(R.id.title);
-//        Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show();
-//        textView.setText(status);
-
         return view;
     }
 
     // this method call activity method
-    public void refreshData(long scrollPosition, int tabPosition){
+    public void refreshData(long scrollPosition, int tabPosition) {
 //        Toast.makeText(getContext(), "Calling refreshData() from adapter", Toast.LENGTH_SHORT).show();
 //        recyclerView.setAdapter(null);
 //        recyclerView.setLayoutManager(null);
 //
 //        getHistoriPresensi(ID_PRESENSI, status);
-        if (getContext() instanceof HistoriPresensiActivity){
-            ((HistoriPresensiActivity)getActivity()).refreshFragment(scrollPosition, tabPosition);
-            System.out.println("scrollPosition : "+scrollPosition);
-            System.out.println("intStatus : "+tabPosition);
+        if (getContext() instanceof HistoriPresensiActivity) {
+            ((HistoriPresensiActivity) getActivity()).refreshFragment(scrollPosition, tabPosition);
+            System.out.println("scrollPosition : " + scrollPosition);
+            System.out.println("intStatus : " + tabPosition);
         }
 
 
@@ -150,12 +133,12 @@ public class HistoriPresensiFragment extends Fragment {
             @Override
             public void onResponse(Call<ResponsePresensiDetail> call, Response<ResponsePresensiDetail> response) {
                 if (response.isSuccessful()) {
-                    Log.i(TAG, "onResponse: response "+response);
+                    Log.i(TAG, "onResponse: response " + response);
 
-                    if(response.body().getPresensiDetail().size()>0){
+                    if (response.body().getPresensiDetail().size() > 0) {
                         presensiArrayList = new ArrayList<>();
-                        for (int i = 0; i <response.body().getPresensiDetail().size() ; i++) {
-                            Log.i(TAG, "onResponse: Mahasiswa "+status+ ". "+response.body().getPresensiDetail().get(i).getNamaMahasiswa());
+                        for (int i = 0; i < response.body().getPresensiDetail().size(); i++) {
+                            Log.i(TAG, "onResponse: Mahasiswa " + status + ". " + response.body().getPresensiDetail().get(i).getNamaMahasiswa());
 
                             String id_presensi = response.body().getPresensiDetail().get(i).getIdPresensi();
                             String nim = response.body().getPresensiDetail().get(i).getNim();
@@ -169,7 +152,6 @@ public class HistoriPresensiFragment extends Fragment {
                             String foto_mahasiswa = response.body().getPresensiDetail().get(i).getFoto_mahasiswa();
 
                             presensiArrayList.add(new PresensiDetail(id_presensi, nim, nama_mahasiswa, status, lat, lng, waktu, jarak, proses, foto_mahasiswa));
-
 
 
                             adapter = new HistoriPresensiAdapter(presensiArrayList, getContext(), HistoriPresensiFragment.this);
@@ -188,23 +170,23 @@ public class HistoriPresensiFragment extends Fragment {
                         //Toast.makeText(getContext(), "Tidak ada mahasiswa yang "+status_kehadiran, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getContext(), "onResponse error: " +response.errorBody(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.terjadi_kesalahan), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponsePresensiDetail> call, Throwable t) {
-                Toast.makeText(getContext(), "onFailure : " +t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getContext().getString(R.string.gagal_terhubung_ke_server), Toast.LENGTH_LONG).show();
             }
         });
 
 
     }
 
-    public long getRecyclerViewScrollPosition(){
+    public long getRecyclerViewScrollPosition() {
 
         long currentVisiblePosition = 0;
-        return  currentVisiblePosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        return currentVisiblePosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
     }
 
 

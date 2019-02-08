@@ -15,7 +15,7 @@ public class ResponseLogin {
     private String status;
     @SerializedName("data")
     @Expose
-    private List<Dosen> data = null;
+    private Dosen data = null;
 
     public String getStatus() {
         return status;
@@ -25,11 +25,11 @@ public class ResponseLogin {
         this.status = status;
     }
 
-    public List<Dosen> getData() {
+    public Dosen getData() {
         return data;
     }
 
-    public void setData(List<Dosen> data) {
+    public void setData(Dosen data) {
         this.data = data;
     }
 

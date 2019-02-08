@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Dosen App</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="log_out">Log out</string>
-    <string name="msg">Mohon terima semua permisi</string>
+    <string name="navigation_drawer_open">Buka navigation drawer</string>
+    <string name="navigation_drawer_close">Tutup navigation drawer</string>
+    <string name="log_out">Keluar</string>
+    <string name="msg">Mohon terima berikan semua izin</string>
     <string name="license_title">Smart Presence Dosen v1.0</string>
     <string name="jadwal_mengajar">Jadwal Mengajar</string>
     <string name="daftar_mahasiswa">Daftar Mahasiswa</string>
@@ -15,7 +15,7 @@
     <string name="histori_mengajar">Histori Mengajar</string>
     <string name="title_activity_profile_saya">ProfileSayaActivity</string>
     <string name="daftar_kehadiran_dosen">Daftar Kehadiran Dosen</string>
-    <string name="license_app">Developed by @radinaldn \nCopyright ©INKUBATOR 2018</string>
+    <string name="license_app">Dikembangkan oleh @radinaldn \nHak cipta ©INKUBATOR 2018</string>
     <string name="gps_is_not_activated">GPS belum diaktifkan</string>
     <string name="do_you_wanna_turn_on_gps">Apakah anda ingin mengaktifkan GPS ? Mengaktifkan GPS akan membantu aplikasi memperoleh lokasi yang akurat.</string>
     <string name="yes">Ya</string>
@@ -23,10 +23,9 @@
     <string name="ubah_password">Ubah kata sandi</string>
     <string name="memuat">MEMUAT…</string>
     <string name="membaca_lokasi">Membaca Lokasi…</string>
-    <string name="dimana_saya">Dimana Saya ?</string>
+    <string name="dimana_saya">Dimana Saya?</string>
     <string name="simpan_lokasi">Simpan Lokasi</string>
     <string name="MAPS_API_KEY">AIzaSyBHuKQvlibzntuWy52K_Eoix1_MLclUzHA</string>
-    <string name="di_mana_saya">Di mana Saya?</string>
     <string name="info">Info</string>
     <string name="nip_nik">NIP/NIK</string>
     <string name="password">Kata sandi</string>
@@ -44,7 +43,7 @@
     <string name="ulangi_kata_sandi_baru">Ulangi kata sandi baru</string>
     <string name="hadir">Hadir</string>
     <string name="tidak_hadir">Tidak hadir</string>
-    <string name="detail">DETAIL</string>
+    <string name="detail">DETIL</string>
     <string name="histori">Histori</string>
     <string name="nohon_non_aktifkan_fitur_lokasi_tiruan">Mohon non-aktifkan Fitur Lokasi Tiruan</string>
     <string name="mohon_aktifkan_tanggal_dan_waktu_otomatis">Mohon aktifkan Tanggal dan Waktu otomatis</string>
@@ -87,12 +86,18 @@
     <string name="anda_yakin_ingin_membatalkan_presensi">Anda yakin ingin membatalkan presensi</string>
     <string name="terima_presensi">Terima Presensi</string>
     <string name="anda_yakin_ingin_menerima_presensi">Anda yakin ingin menerima presensi</string>
-    <string name="kelas">Kelas</string>
-    <string name="sks">SKS</string>
+    <string name="kelas">Kelas %1$s</string>
+    <string name="sks">%1$s SKS</string>
     <string name="pukul">Pukul</string>
     <string name="silahkan_pilih_ruangan_perkuliahan">Silahkan pilih ruangan perkuliahan</string>
     <string name="pilih_ruangan">Pilih ruangan</string>
     <string name="anda_yakin_ingin_memulai_perkuliahan">Anda yakin ingin memulai perkuliahan %1$s kelas %2$s di ruangan %3$s ?</string>
     <string name="aplikasi_tidak_berhasil_mendapatkan_lokasi_anda">Aplikasi tidak berhasil mendapatkan lokasi anda</string>
+    <string name="kehadiran_dosen">Kehadiran Dosen</string>
+    <string name="lainnya">Lainnya</string>
+    <string name="info_kehadiran">Info Kehadiran</string>
+    <string name="pengaturan">Pengaturan</string>
+    <string name="tentang">About</string>
+    <string name="laporkan_bug_error">Laporkan Bug/Error</string>
 
 </resources>

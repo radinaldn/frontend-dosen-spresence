@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.activities.HistoriMengajarActivity;
@@ -81,9 +79,9 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
     public void onBindViewHolder(@NonNull MengajarViewHolder holder, int position) {
         holder.tv_idmengajar.setText(dataList.get(position).getIdMengajar());
         holder.tv_matakuliah.setText(dataList.get(position).getNamaMatakuliah());
-        holder.tv_kelas.setText("Kelas "+dataList.get(position).getNamaKelas());
-        holder.tv_sks.setText(dataList.get(position).getSks()+" SKS");
-        holder.tv_waktu.setText("Pukul "+dataList.get(position).getWaktuMulai());
+        holder.tv_kelas.setText(mContext.getString(R.string.kelas) +" "+ dataList.get(position).getNamaKelas());
+        holder.tv_sks.setText(dataList.get(position).getSks() +" "+ mContext.getString(R.string.sks));
+        holder.tv_waktu.setText(mContext.getString(R.string.pukul) +" "+ dataList.get(position).getWaktuMulai());
 
 
     }
@@ -119,22 +117,22 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
             tv_idmengajar = itemView.findViewById(R.id.tv_idmengajar);
             tv_matakuliah = itemView.findViewById(R.id.tv_matakuliah);
             tv_kelas = itemView.findViewById(R.id.tv_kelas);
-            tv_sks= itemView.findViewById(R.id.tv_sks);
-            tv_waktu= itemView.findViewById(R.id.tv_waktu);
+            tv_sks = itemView.findViewById(R.id.tv_sks);
+            tv_waktu = itemView.findViewById(R.id.tv_waktu);
             bt_mulai = itemView.findViewById(R.id.bt_mulai);
             bt_histori = itemView.findViewById(R.id.bt_histori);
 
-            System.out.println("parentActivityName : "+parentActivityName);
+            System.out.println("parentActivityName : " + parentActivityName);
 
 
-            if (parentActivityName.equals(MainActivity.TAG)){
+            if (parentActivityName.equals(MainActivity.TAG)) {
                 bt_mulai.setVisibility(View.INVISIBLE);
             } else {
                 bt_mulai.setVisibility(View.VISIBLE);
             }
 
-            if(mContext instanceof MengajarActivity){
-                if (((MengajarActivity) mContext).getLatitude().equalsIgnoreCase("0.0")){
+            if (mContext instanceof MengajarActivity) {
+                if (((MengajarActivity) mContext).getLatitude().equalsIgnoreCase("0.0")) {
                     setDisabledBtMulai();
                 } else {
                     setEnabledBtMulai();
@@ -142,7 +140,6 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
 
 
             }
-
 
 
             // ketika matakuliah diklik untuk memulai perkuliahan
@@ -176,12 +173,12 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
             apiService.ruanganFindAll().enqueue(new Callback<ResponseRuangan>() {
                 @Override
                 public void onResponse(Call<ResponseRuangan> call, Response<ResponseRuangan> response) {
-                    if(response.isSuccessful()){
-                        if (response.body().getRuangan().size()>0){
+                    if (response.isSuccessful()) {
+                        if (response.body().getRuangan().size() > 0) {
                             for (int i = 0; i < response.body().getRuangan().size(); i++) {
                                 ruangan.add(new Ruangan(response.body().getRuangan().get(i).getIdRuangan(), response.body().getRuangan().get(i).getNama())); // mengisi object Ruangan
                                 namaRuangan.add(response.body().getRuangan().get(i).getNama()); // mengisi List namaRuangan (tanpa id)
-                                Log.i(TAG, "onResponse info: response "+i+" ruanganFindAll = "+response.body().getRuangan().get(i).getNama());
+                                Log.i(TAG, "onResponse info: response " + i + " ruanganFindAll = " + response.body().getRuangan().get(i).getNama());
                             }
 
                             arrayAdapter = new ArrayAdapter<String>(
@@ -192,16 +189,16 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                         }
 
                     } else {
-                        Log.e(TAG, "onResponse error: "+response.errorBody());
+                        Toast.makeText(mContext, mContext.getString(R.string.terjadi_kesalahan), Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseRuangan> call, Throwable t) {
+                    Toast.makeText(mContext, mContext.getString(R.string.gagal_terhubung_ke_server), Toast.LENGTH_SHORT).show();
                     t.printStackTrace();
                 }
             });
-
 
 
         }
@@ -210,7 +207,7 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
             bt_mulai.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "Silahkan pilih ruangan perkuliahan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(itemView.getContext(), R.string.silahkan_pilih_ruangan_perkuliahan, Toast.LENGTH_SHORT).show();
                     String id_mengajar = tv_idmengajar.getText().toString();
                     String matakuliah = tv_matakuliah.getText().toString();
                     String kelas = tv_kelas.getText().toString();
@@ -231,11 +228,11 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
             });
         }
 
-        private void showPopUpRuangan(final String id_mengajar, final String matakuliah, final String kelas){
+        private void showPopUpRuangan(final String id_mengajar, final String matakuliah, final String kelas) {
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(this.itemView.getContext());
             final AlertDialog.Builder confirmBox = new AlertDialog.Builder(this.itemView.getContext());
-            builder.setTitle("Pilih ruangan");
+            builder.setTitle(R.string.pilih_ruangan);
             builder.setSingleChoiceItems(arrayAdapter, -1, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, final int item) {
@@ -243,21 +240,24 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                     final String selectedNamaRuangan = ruangan.get(item).getNama();
 
                     // show confirmation box
-                    confirmBox.setTitle("Konfirmasi");
+                    confirmBox.setTitle(R.string.konfirmasi);
                     confirmBox.setIcon(R.drawable.ic_live_help_black_24dp);
-                    confirmBox.setMessage("Anda yakin ingin memulai perkuliahan "+matakuliah+" kelas "+kelas+" di ruangan "+selectedNamaRuangan+" ?");
+                    confirmBox.setMessage(String.format(mContext.getResources().getString(
+                            R.string.anda_yakin_ingin_memulai_perkuliahan),
+                            matakuliah, kelas, selectedNamaRuangan));
                     confirmBox.setCancelable(false);
-                    confirmBox.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                    confirmBox.setPositiveButton(mContext.getString(R.string.ya), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            if(mContext instanceof MengajarActivity){
+                            if (mContext instanceof MengajarActivity) {
                                 String current_lat = ((MengajarActivity) mContext).getLatitude();
                                 String current_lng = ((MengajarActivity) mContext).getLongitude();
 
 
                                 if (current_lat.equalsIgnoreCase("0.0")) {
-                                    Toast.makeText(itemView.getContext(), "Aplikasi tidak berhasil mendapatkan lokasi anda."+"\nLat : "+current_lat+"\nLng : "+current_lng, Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(itemView.getContext(), "Aplikasi tidak berhasil mendapatkan lokasi anda."+"\nLat : "+current_lat+"\nLng : "+current_lng, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(itemView.getContext(), R.string.aplikasi_tidak_berhasil_mendapatkan_lokasi_anda, Toast.LENGTH_LONG).show();
 
                                 } else {
 //                                    Toast.makeText(context, "presensiAdd()\nlat : "+current_lat+"\nlng : "+current_lng, Toast.LENGTH_SHORT).show();
@@ -266,16 +266,15 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
                                 }
 
 
-
                             }
 
 
                         }
                     });
-                    confirmBox.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                    confirmBox.setNegativeButton(mContext.getString(R.string.tidak), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(context, "anda menekan Tidak", Toast.LENGTH_SHORT).show();
+                            dialog.cancel();
                         }
                     });
 
@@ -289,35 +288,35 @@ public class MengajarAdapter extends RecyclerView.Adapter<MengajarAdapter.Mengaj
             alertDialog1.show();
         }
 
-        public void presensiAdd(String id_mengajar, String id_ruangan, String lat, String lng, String nip, String nama_ruangan, final String matakuliah, final String kelas){
+        public void presensiAdd(String id_mengajar, String id_ruangan, String lat, String lng, String nip, String nama_ruangan, final String matakuliah, final String kelas) {
             System.out.println();
             apiService.presensiAdd(id_mengajar, id_ruangan, lat, lng, nip, nama_ruangan).enqueue(new Callback<ResponsePresensi>() {
                 @Override
                 public void onResponse(Call<ResponsePresensi> call, Response<ResponsePresensi> response) {
                     System.out.println(response.toString());
-                    if(response.isSuccessful()){
-                        if(response.body().getStatus().equals(TAG_OK) || response.body().getStatus().equals(TAG_FAILED)){
+                    if (response.isSuccessful()) {
+                        if (response.body().getStatus().equals(TAG_OK) || response.body().getStatus().equals(TAG_FAILED)) {
                             Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
 
                             Intent i = new Intent(itemView.getContext(), HistoriPresensiActivity.class);
-                            Log.i(TAG, "onResponse: getIdPresensi() : "+response.body().getIdPresensi());
-                            i.putExtra(TAG_ID_PRESENSI,response.body().getIdPresensi());
+                            Log.i(TAG, "onResponse: getIdPresensi() : " + response.body().getIdPresensi());
+                            i.putExtra(TAG_ID_PRESENSI, response.body().getIdPresensi());
                             i.putExtra(TAG_STATUS_PRESENSI, STATUS_PRESENSI);
                             i.putExtra(TAG_MATAKULIAH, matakuliah);
                             i.putExtra(TAG_KELAS, kelas);
                             itemView.getContext().startActivity(i);
                         } else {
-                            Toast.makeText(context, "onResponse error : "+response.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, mContext.getString(R.string.terjadi_kesalahan), Toast.LENGTH_LONG).show();
 
                         }
                     } else {
-                        Toast.makeText(context, "Error memulai presensi", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, mContext.getString(R.string.terjadi_kesalahan), Toast.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponsePresensi> call, Throwable t) {
-                    t.getLocalizedMessage();
+                    Toast.makeText(context, mContext.getString(R.string.gagal_terhubung_ke_server), Toast.LENGTH_LONG).show();
                 }
             });
         }

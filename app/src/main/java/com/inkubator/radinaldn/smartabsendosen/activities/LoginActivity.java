@@ -8,7 +8,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -24,8 +23,6 @@ import com.inkubator.radinaldn.smartabsendosen.rests.ApiInterface;
 import com.inkubator.radinaldn.smartabsendosen.utils.AbsRuntimePermission;
 import com.inkubator.radinaldn.smartabsendosen.utils.SessionManager;
 import com.onurkaganaldemir.ktoastlib.KToast;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,7 +63,7 @@ public class LoginActivity extends AbsRuntimePermission {
                         Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.RECORD_AUDIO},
-                R.string.msg,REQUEST_PERMISSION);
+                R.string.msg, REQUEST_PERMISSION);
 
         //init
         ButterKnife.bind(this);
@@ -92,54 +89,54 @@ public class LoginActivity extends AbsRuntimePermission {
 
     @Override
     public void onPermissionGranted(int requestcode) {
-        Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), R.string.izin_diberikan, Toast.LENGTH_LONG).show();
     }
 
     private void loginUser() {
         nip = etnip.getText().toString();
         password = etpassword.getText().toString();
-            imei = "356876057383575";
+        imei = "356876057383575";
 
-        Log.d(TAG, "loginUser: " + nip +" "+password+" "+imei);
+        Log.d(TAG, "loginUser: " + nip + " " + password + " " + imei);
 
         apiService.login(nip, password, imei).enqueue(new Callback<ResponseLogin>() {
             @Override
             public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     Log.d(TAG, "onResponse: Dapat terhubung ke server");
-                    Log.d(TAG, "onResponse: " +response.body().getStatus());
+                    Log.d(TAG, "onResponse: " + response.body().getStatus());
 
-                    List<Dosen> dosen = response.body().getData();
+                    Dosen dosen = response.body().getData();
 
-                    if(response.body().getStatus().equalsIgnoreCase("success")){
-                        sessionManager.createLoginSession(dosen.get(0).getNip(),
-                                dosen.get(0).getPassword(),
-                                dosen.get(0).getImei(),
-                                dosen.get(0).getNama(),
-                                dosen.get(0).getJk(),
-                                dosen.get(0).getFoto());
+                    if (response.body().getStatus().equalsIgnoreCase("success")) {
+                        sessionManager.createLoginSession(dosen.getNip(),
+                                dosen.getPassword(),
+                                dosen.getImei(),
+                                dosen.getNama(),
+                                dosen.getJk(),
+                                dosen.getFoto());
 
                         Log.d(TAG, "onResponse: Dapat data dosen");
 
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        KToast.successToast(LoginActivity.this, "Berhasil login.", Gravity.BOTTOM, KToast.LENGTH_SHORT);
+                        KToast.successToast(LoginActivity.this, getString(R.string.berhasil_login), Gravity.BOTTOM, KToast.LENGTH_SHORT);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);
                         finish();
 
                     } else {
-                        Toast.makeText(getApplicationContext(), "Gagal login : "+response.body().getStatus(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.gagal_login) + response.body().getStatus(), Toast.LENGTH_SHORT).show();
                     }
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Gagal login : "+response, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.terjadi_kesalahan), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Gagal konek ke server", Toast.LENGTH_LONG).show();
-                Log.e(TAG, "onFailure: "+ t.getLocalizedMessage());
+                Toast.makeText(getApplicationContext(), getString(R.string.gagal_terhubung_ke_server), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "onFailure: " + t.getLocalizedMessage());
             }
         });
     }

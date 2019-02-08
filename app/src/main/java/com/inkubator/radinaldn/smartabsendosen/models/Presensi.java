@@ -8,6 +8,9 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Presensi {
+
+    public static final String OPEN = "open";
+
     @SerializedName("id_presensi")
     @Expose
     private String idPresensi;

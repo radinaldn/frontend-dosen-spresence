@@ -50,7 +50,7 @@ public class KehadiranDosenAdapter extends RecyclerView.Adapter<KehadiranDosenAd
     @Override
     public void onBindViewHolder(@NonNull KehadiranDosenViewHolder holder, int position) {
         Picasso.with(context)
-                .load(ServerConfig.IMAGE_PATH+"dosen/"+dataList.get(position).getFoto())
+                .load(ServerConfig.IMAGE_PATH + "dosen/" + dataList.get(position).getFoto())
                 .placeholder(R.drawable.dummy_ava)
                 .error(R.drawable.dummy_ava)
                 .centerCrop()
@@ -60,7 +60,7 @@ public class KehadiranDosenAdapter extends RecyclerView.Adapter<KehadiranDosenAd
 
         holder.tv_nama_dosen.setText(dataList.get(position).getNama_dosen());
         holder.tv_status_kehadiran.setText(dataList.get(position).getStatus_kehadiran());
-        switch (dataList.get(position).getStatus_kehadiran()){
+        switch (dataList.get(position).getStatus_kehadiran()) {
             case "Hadir":
                 holder.tv_status_kehadiran.setBackgroundColor(context.getResources().getColor(R.color.GreenBootstrap));
                 break;
@@ -71,7 +71,7 @@ public class KehadiranDosenAdapter extends RecyclerView.Adapter<KehadiranDosenAd
         }
 
         // cek apakah nama_kota == null
-        if (dataList.get(position).getNama_kota()!=null && !dataList.get(position).getNama_kota().equalsIgnoreCase("")){
+        if (dataList.get(position).getNama_kota() != null && !dataList.get(position).getNama_kota().equalsIgnoreCase("")) {
             holder.tv_nama_kota.setText(dataList.get(position).getNama_kota());
             holder.tv_nama_kota.setVisibility(View.VISIBLE);
         }

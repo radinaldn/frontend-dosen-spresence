@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-
 import java.util.HashMap;
 
 /**
@@ -36,18 +35,18 @@ public class SessionManager {
 
     public static final String SHARE_LOC_IS_ON = "shareLocIsOn";
 
-    public Context get_context(){
+    public Context get_context() {
         return _context;
     }
 
     // constructor
-    public SessionManager(Context context){
+    public SessionManager(Context context) {
         this._context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         editor = sharedPreferences.edit();
     }
 
-    public void createLoginSession(String nip, String password, String imei, String nama, String jk, String foto){
+    public void createLoginSession(String nip, String password, String imei, String nama, String jk, String foto) {
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.putString(NIP, nip);
         editor.putString(PASSWORD, password);
@@ -58,7 +57,7 @@ public class SessionManager {
         editor.commit();
     }
 
-    public void createMyLocationSession(String latitude, String longitude, String last_located){
+    public void createMyLocationSession(String latitude, String longitude, String last_located) {
         editor.putBoolean(HAS_LAST_LOCATION, true);
         editor.putString(LATITUDE, latitude);
         editor.putString(LONGITUDE, longitude);
@@ -67,28 +66,28 @@ public class SessionManager {
 
     }
 
-    public void setStatusSwitchShareLoc(boolean status){
+    public void setStatusSwitchShareLoc(boolean status) {
         editor.putBoolean(SHARE_LOC_IS_ON, status);
         editor.commit();
     }
 
-    public boolean getStatusSwitchShareLoc(){
+    public boolean getStatusSwitchShareLoc() {
         return sharedPreferences.getBoolean(SHARE_LOC_IS_ON, false);
     }
 
-    public HashMap<String, String> getDosenDetail(){
-        HashMap<String,String> dosen = new HashMap<>();
-        dosen.put(NIP, sharedPreferences.getString(NIP,null));
+    public HashMap<String, String> getDosenDetail() {
+        HashMap<String, String> dosen = new HashMap<>();
+        dosen.put(NIP, sharedPreferences.getString(NIP, null));
         dosen.put(PASSWORD, sharedPreferences.getString(PASSWORD, null));
-        dosen.put(IMEI, sharedPreferences.getString(IMEI,null));
-        dosen.put(NAMA, sharedPreferences.getString(NAMA,null));
-        dosen.put(JK, sharedPreferences.getString(JK,null));
-        dosen.put(FOTO, sharedPreferences.getString(FOTO,null));
+        dosen.put(IMEI, sharedPreferences.getString(IMEI, null));
+        dosen.put(NAMA, sharedPreferences.getString(NAMA, null));
+        dosen.put(JK, sharedPreferences.getString(JK, null));
+        dosen.put(FOTO, sharedPreferences.getString(FOTO, null));
 
         return dosen;
     }
 
-    public HashMap<String, String> getMyLocationDetail(){
+    public HashMap<String, String> getMyLocationDetail() {
         HashMap<String, String> location = new HashMap<>();
         location.put(LATITUDE, sharedPreferences.getString(LATITUDE, null));
         location.put(LONGITUDE, sharedPreferences.getString(LONGITUDE, null));
@@ -96,16 +95,16 @@ public class SessionManager {
         return location;
     }
 
-    public void logoutDosen(){
+    public void logoutDosen() {
         editor.clear();
         editor.commit();
     }
 
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return sharedPreferences.getBoolean(IS_LOGGED_IN, false);
     }
 
-    public boolean hasLastLocation(){
+    public boolean hasLastLocation() {
         return sharedPreferences.getBoolean(HAS_LAST_LOCATION, false);
     }
 }

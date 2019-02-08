@@ -5,47 +5,43 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
+import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.adapters.MengajarAdapter;
 import com.inkubator.radinaldn.smartabsendosen.config.ServerConfig;
-import com.inkubator.radinaldn.smartabsendosen.R;
 import com.inkubator.radinaldn.smartabsendosen.models.KehadiranDosen;
 import com.inkubator.radinaldn.smartabsendosen.models.Mengajar;
 import com.inkubator.radinaldn.smartabsendosen.responses.ResponseKehadiranDosen;
@@ -68,7 +64,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TextToSpeech.OnInitListener {
 
     ImageView imageView;
-    TextView tvname, tvjurusan, tv_libur;;
+    TextView tvname, tvjurusan, tv_libur;
+    ;
     private ProgressDialog pDialog;
     private SwitchCompat swbagikanlokasi;
     NotificationManager nManager;
@@ -94,8 +91,8 @@ public class MainActivity extends AppCompatActivity
 
 
     // function for set the state of switch (on/off)
-    public static void setSwBagikanLokasi(boolean status, Context context){
-        if (staticSessionManager==null){
+    public static void setSwBagikanLokasi(boolean status, Context context) {
+        if (staticSessionManager == null) {
             staticSessionManager = new SessionManager(context);
         }
         staticSessionManager.setStatusSwitchShareLoc(false);
@@ -118,9 +115,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         sessionManager = new SessionManager(this);
-        Log.d(TAG, "sesionManager.isLoggedIn(): "+sessionManager.isLoggedIn());
+        Log.d(TAG, "sesionManager.isLoggedIn(): " + sessionManager.isLoggedIn());
 
-        if(!sessionManager.isLoggedIn()){
+        if (!sessionManager.isLoggedIn()) {
             Intent i = new Intent(MainActivity.this, LoginActivity.class);
             // agar tidak balik ke activity ini lagi
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -137,7 +134,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Stetho.initializeWithDefaults(this);
-
 
 
         apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -165,7 +161,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
 
                 //Snackbar.make(v, (swbagikanlokasi.isChecked()) ? "is checked!!!" : "not checked!!!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-                if (swbagikanlokasi.isChecked()){
+                if (swbagikanlokasi.isChecked()) {
                     jalankanServiceShareLoc(v);
 
                 } else {
@@ -174,7 +170,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        Log.i(TAG, "onCreate: "+sessionManager.getDosenDetail().get(TAG_NAMA));
+        Log.i(TAG, "onCreate: " + sessionManager.getDosenDetail().get(TAG_NAMA));
 
         View header = navigationView.getHeaderView(0);
 
@@ -184,7 +180,7 @@ public class MainActivity extends AppCompatActivity
         tvjurusan = header.findViewById(R.id.tvJurusan);
 
         Picasso.with(getApplicationContext())
-                .load(ServerConfig.IMAGE_PATH+"/dosen/"+sessionManager.getDosenDetail().get(TAG_FOTO))
+                .load(ServerConfig.IMAGE_PATH + "/dosen/" + sessionManager.getDosenDetail().get(TAG_FOTO))
                 .resize(100, 100)
                 .placeholder(R.drawable.dummy_ava)
                 .error(R.drawable.dummy_ava)
@@ -192,11 +188,11 @@ public class MainActivity extends AppCompatActivity
                 .into(imageView);
 
         tvname.setText(sessionManager.getDosenDetail().get(TAG_NAMA));
-        tvjurusan.setText("(" +sessionManager.getDosenDetail().get(TAG_NIP)+ ")");
+        tvjurusan.setText("(" + sessionManager.getDosenDetail().get(TAG_NIP) + ")");
 
         tv_libur = findViewById(R.id.tv_libur);
         /**
-        Isi data Kuliah hari ini
+         Isi data Kuliah hari ini
          */
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -256,7 +252,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 // displaying the first match
-                if (matches != null){
+                if (matches != null) {
 
                     Toast.makeText(getApplicationContext(), matches.get(0), Toast.LENGTH_LONG).show();
                     RESULT_STT = matches.get(0);
@@ -266,49 +262,55 @@ public class MainActivity extends AppCompatActivity
                      */
 
                     //split result
-                    String [] hasils = RESULT_STT.split(" ");
+                    String[] hasils = RESULT_STT.split(" ");
 
                     // jika hasils[0] == di || hasil[0] == dimana
-                    if (hasils[0].equalsIgnoreCase("di") || RESULT_STT.equalsIgnoreCase(TAG_dimana)){
+                    if (hasils[0].equalsIgnoreCase("di") || RESULT_STT.equalsIgnoreCase(TAG_dimana)) {
 
                         String nama_dosen = null;
 
-                        if (hasils[0].equalsIgnoreCase("di")){
-                            if (hasils[2].equals("pak")){
+                        if (hasils[0].equalsIgnoreCase("di")) {
+                            if (hasils[2].equals("pak")) {
                                 String str_new = RESULT_STT.replaceFirst("di mana pak ", "");
                                 nama_dosen = str_new;
 
-                            } if(hasils[2].equals("Pak")){
+                            }
+                            if (hasils[2].equals("Pak")) {
                                 String str_new = RESULT_STT.replaceFirst("di mana Pak ", "");
                                 nama_dosen = str_new;
 
-                            } if (hasils[2].equalsIgnoreCase("bu")){
+                            }
+                            if (hasils[2].equalsIgnoreCase("bu")) {
                                 String str_new = RESULT_STT.replaceFirst("di mana bu ", "");
                                 nama_dosen = str_new;
-                            } if (hasils[2].equalsIgnoreCase("Bu")) {
+                            }
+                            if (hasils[2].equalsIgnoreCase("Bu")) {
                                 String str_new = RESULT_STT.replaceFirst("di mana Bu ", "");
                                 nama_dosen = str_new;
                             }
 
-                        } else if (hasils[0].equalsIgnoreCase("dimana")){
-                            if (hasils[1].equalsIgnoreCase("pak")){
+                        } else if (hasils[0].equalsIgnoreCase("dimana")) {
+                            if (hasils[1].equalsIgnoreCase("pak")) {
                                 String str_new = RESULT_STT.replaceFirst("dimana pak", "");
                                 nama_dosen = str_new;
 
-                            } if (hasils[1].equalsIgnoreCase("Pak")) {
+                            }
+                            if (hasils[1].equalsIgnoreCase("Pak")) {
                                 String str_new = RESULT_STT.replaceFirst("dimana Pak", "");
                                 nama_dosen = str_new;
 
-                            } if (hasils[1].equalsIgnoreCase("bu")){
+                            }
+                            if (hasils[1].equalsIgnoreCase("bu")) {
                                 String str_new = RESULT_STT.replaceFirst("dimana bu", "");
                                 nama_dosen = str_new;
-                            } if (hasils[1].equalsIgnoreCase("Bu")){
+                            }
+                            if (hasils[1].equalsIgnoreCase("Bu")) {
                                 String str_new = RESULT_STT.replaceFirst("dimana Bu", "");
                                 nama_dosen = str_new;
                             }
                         }
 
-                        if (nama_dosen!=null){
+                        if (nama_dosen != null) {
                             //Jika berhasil dan sesuai, cari data kehadiran dosen
                             final String finalNama_dosen = nama_dosen;
                             apiService.dosenKehadiranFindByName(nama_dosen).enqueue(new Callback<ResponseKehadiranDosen>() {
@@ -318,7 +320,7 @@ public class MainActivity extends AppCompatActivity
 
                                         System.out.println(response.toString());
                                         System.out.println(response.body().toString());
-                                        if (response.body().getKehadiranDosen().size()==1){
+                                        if (response.body().getKehadiranDosen().size() == 1) {
 
                                             List<KehadiranDosen> hasil_req = response.body().getKehadiranDosen();
                                             String nama_dosen = hasil_req.get(0).getNama_dosen();
@@ -326,17 +328,17 @@ public class MainActivity extends AppCompatActivity
                                             String nama_kota = hasil_req.get(0).getNama_kota();
                                             String last_update = hasil_req.get(0).getLast_update();
 
-                                            RESULT_TTS = finalNama_dosen+" yang ditemukan "+nama_dosen+" dengan status "+status_kehadiran+", berada di "+nama_kota+" terakhir update "+last_update;
+                                            RESULT_TTS = finalNama_dosen + " yang ditemukan " + nama_dosen + " dengan status " + status_kehadiran + ", berada di " + nama_kota + " terakhir update " + last_update;
                                             speakOut();
-                                        } else if (response.body().getKehadiranDosen().size() > 1){
-                                            Toast.makeText(getApplicationContext(), "Data " + finalNama_dosen +" ada "+response.body().getKehadiranDosen().size(), Toast.LENGTH_LONG).show();
+                                        } else if (response.body().getKehadiranDosen().size() > 1) {
+                                            Toast.makeText(getApplicationContext(), "Data " + finalNama_dosen + " ada " + response.body().getKehadiranDosen().size(), Toast.LENGTH_LONG).show();
                                         } else {
                                             Toast.makeText(getApplicationContext(), "Tidak ada  Data " + finalNama_dosen, Toast.LENGTH_LONG).show();
                                         }
 
 
                                     } else {
-                                        Toast.makeText(getApplicationContext(), "Tidak dapat memuat data "+finalNama_dosen, Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Tidak dapat memuat data " + finalNama_dosen, Toast.LENGTH_LONG).show();
                                     }
                                 }
 
@@ -348,12 +350,11 @@ public class MainActivity extends AppCompatActivity
                         }
 
 
-
                     } else {
-                        Toast.makeText(getApplicationContext(), "MainActivity.java line 219 :\n"+ RESULT_STT, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), RESULT_STT, Toast.LENGTH_LONG).show();
                     }
 
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), matches.get(0), Toast.LENGTH_LONG).show();
                 }
             }
@@ -372,12 +373,12 @@ public class MainActivity extends AppCompatActivity
         fab.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         //  onPressed
                         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                         fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.textColorSecondary)));
-                        Toast.makeText(getApplicationContext(), "Silahkan berbicara", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.silahkan_berbicara, Toast.LENGTH_SHORT).show();
                         return true;
 
                     case MotionEvent.ACTION_UP:
@@ -460,9 +461,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<ResponseMengajar> call, Response<ResponseMengajar> response) {
                 System.out.println(response.toString());
-                if(response.isSuccessful()){
-                    System.out.println("Ada data : "+response.body().getMengajar().size());
-                    if(response.body().getMengajar().size()>0){
+                if (response.isSuccessful()) {
+                    System.out.println("Ada data : " + response.body().getMengajar().size());
+                    if (response.body().getMengajar().size() > 0) {
                         //hilangkan pesan libur
                         tv_libur.setVisibility(View.GONE);
                         mengajarArrayList = new ArrayList<>();
@@ -534,9 +535,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.absen) {
-            // Handle the camera action
-        } else if (id == R.id.nav_help) {
+        if (id == R.id.nav_help) {
 
         } else if (id == R.id.jadwal_mengajar) {
 
@@ -552,14 +551,14 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, KehadiranDosenActivity.class);
             startActivity(intent);
 
-        } else if (id ==R.id.dimana_saya){
+        } else if (id == R.id.dimana_saya) {
             Intent intent = new Intent(MainActivity.this, DimanaSayaActivity.class);
             startActivity(intent);
 
-        }else if (id == R.id.nav_share_loc) {
+        } else if (id == R.id.nav_share_loc) {
             swbagikanlokasi.setChecked(!swbagikanlokasi.isChecked());
             //Snackbar.make(item.getActionView(), (swbagikanlokasi.isChecked()) ? "is checked!!!" : "not checked!!!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-            if (swbagikanlokasi.isChecked()){
+            if (swbagikanlokasi.isChecked()) {
                 jalankanServiceShareLoc(item.getActionView());
 
             } else {
@@ -587,7 +586,7 @@ public class MainActivity extends AppCompatActivity
 
             // Showing Alert Message
             alertDialog.show();
-        } else if (id == R.id.nav_lapor_bug){
+        } else if (id == R.id.nav_lapor_bug) {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/radinaldn/"));
             startActivity(browserIntent);
         }
@@ -599,7 +598,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS){
+        if (status == TextToSpeech.SUCCESS) {
             int result = tts.setLanguage(new Locale("id", "ID"));
 
             if (result == TextToSpeech.LANG_MISSING_DATA
@@ -625,7 +624,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         //shutdown tts
-        if (tts!=null){
+        if (tts != null) {
             tts.stop();
             tts.shutdown();
         }

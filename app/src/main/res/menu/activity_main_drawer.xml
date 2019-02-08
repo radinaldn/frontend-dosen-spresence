@@ -6,22 +6,17 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:visible="false"
-            android:id="@+id/absen"
-            android:icon="@drawable/ic_school"
-            android:title="Absen" />
-        <item
             android:id="@+id/jadwal_mengajar"
             android:icon="@drawable/ic_clock"
-            android:title="Jadwal Mengajar" />
+            android:title="@string/jadwal_mengajar" />
         <item
             android:id="@+id/kehadiran_dosen"
             android:icon="@drawable/ic_check_dosen"
-            android:title="Kehadiran Dosen" />
+            android:title="@string/kehadiran_dosen" />
         <item
             android:id="@+id/histori_saya"
             android:icon="@drawable/ic_calendar"
-            android:title="Histori Perkuliahan" />
+            android:title="@string/histori_perkuliahan" />
         <item
             android:visible="false"
             android:id="@+id/berita"
@@ -30,16 +25,16 @@
         <item
             android:icon="@drawable/ic_my_location"
             android:id="@+id/dimana_saya"
-            android:title="Dimana Saya ?"
+            android:title="@string/dimana_saya"
             />
     </group>
 
-    <item android:title="Lainnya">
+    <item android:title="@string/lainnya">
         <menu>
             <item
                 android:id="@+id/nav_share_loc"
                 android:icon="@drawable/ic_share_loc"
-                android:title="Info Kehadiran"
+                android:title="@string/info_kehadiran"
                 app:actionLayout="@layout/layout_switch"
                 />
             <item
@@ -50,15 +45,15 @@
             <item
                 android:id="@+id/nav_pengaturan"
                 android:icon="@drawable/ic_settings_black_24dp"
-                android:title="Pengaturan" />
+                android:title="@string/pengaturan" />
             <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/info"
-                android:title="Tentang" />
+                android:title="@string/tentang" />
             <item
                 android:id="@+id/nav_lapor_bug"
                 android:icon="@drawable/ic_bug_report"
-                android:title="Laporkan Bug/Error"/>
+                android:title="@string/laporkan_bug_error"/>
 
         </menu>
 

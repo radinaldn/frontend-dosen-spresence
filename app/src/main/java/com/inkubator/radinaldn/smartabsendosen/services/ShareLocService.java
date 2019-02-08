@@ -91,62 +91,61 @@ public class ShareLocService extends Service {
                 locationListener);
 
 
-
         //Declare the timer
         Timer t = new Timer();
         //Set the schedule function and rate
         t.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                //Called each time when 1000 milliseconds (1 second) (the period parameter)
-                 System.out.println("10 detik berlalu");
+                                  @Override
+                                  public void run() {
+                                      //Called each time when 1000 milliseconds (1 second) (the period parameter)
+                                      System.out.println("10 detik berlalu");
 
 
-                 if (latittude!= null) {
-                     Log.i(TAG, "run: cur_loc : "+latittude+" "+longitude+" "+altitude);
+                                      if (latittude != null) {
+                                          Log.i(TAG, "run: cur_loc : " + latittude + " " + longitude + " " + altitude);
 
-                     // check apakah saya berada di dalam segmen ?
-                     boolean imInSegment = isInSegment(Double.parseDouble(latittude), Double.parseDouble(longitude));
-                     System.out.println("boolean imInsegment ("+latittude+", "+longitude+") : "+imInSegment);
+                                          // check apakah saya berada di dalam segmen ?
+                                          boolean imInSegment = isInSegment(Double.parseDouble(latittude), Double.parseDouble(longitude));
+                                          System.out.println("boolean imInsegment (" + latittude + ", " + longitude + ") : " + imInSegment);
 
-                     if (imInSegment){
-                         status_kehadiran = KehadiranDosen.HADIR;
-                         nama_kota = "Fakultas Sains dan Teknologi";
-                     } else {
-                         status_kehadiran = KehadiranDosen.TIDAK_HADIR;
+                                          if (imInSegment) {
+                                              status_kehadiran = KehadiranDosen.HADIR;
+                                              nama_kota = "Fakultas Sains dan Teknologi";
+                                          } else {
+                                              status_kehadiran = KehadiranDosen.TIDAK_HADIR;
 
 
-                         String latlng = latittude+","+longitude;
-                         // dapatkan data kota mmenggunakan Google Reverse Geocoding
-                         nama_kota = getKotaByGeocodeJson(latlng, ServerConfig.GOOGLE_API_KEY);
-                     }
+                                              String latlng = latittude + "," + longitude;
+                                              // dapatkan data kota mmenggunakan Google Reverse Geocoding
+                                              nama_kota = getKotaByGeocodeJson(latlng, ServerConfig.GOOGLE_API_KEY);
+                                          }
 
-                     updateMyLocation(nip, status_kehadiran, nama_kota);
-                     Log.d(TAG, "run: updateMyLocation("+nip+", "+status_kehadiran+", "+nama_kota+");");
-                 } else {
-                     Log.e(TAG, "run: lat, lng, alt is null");
-                 }
+                                          updateMyLocation(nip, status_kehadiran, nama_kota);
+                                          Log.d(TAG, "run: updateMyLocation(" + nip + ", " + status_kehadiran + ", " + nama_kota + ");");
+                                      } else {
+                                          Log.e(TAG, "run: lat, lng, alt is null");
+                                      }
 
-            }
-            },
+                                  }
+                              },
                 //Set how long before to start calling the TimerTask (in milliseconds)
                 0,
                 //Set the amount of time between each execution (in milliseconds)
-                10*1000);
+                10 * 1000);
 
 
         return START_STICKY;
 
     }
 
-    private String getKotaByGeocodeJson(String latlng, String GOOGLE_API_KEY){
+    private String getKotaByGeocodeJson(String latlng, String GOOGLE_API_KEY) {
         googleApiService.geocodeJson(latlng, ServerConfig.GOOGLE_API_KEY).enqueue(new Callback<ResponseReverseGeocoding>() {
             @Override
             public void onResponse(Call<ResponseReverseGeocoding> call, Response<ResponseReverseGeocoding> response) {
-                System.out.println("response : "+response);
-                System.out.println("response : "+response.body().toString());
-                if (response.isSuccessful()){
-                    if (response.body().getStatus().equalsIgnoreCase("OK")){
+                System.out.println("response : " + response);
+                System.out.println("response : " + response.body().toString());
+                if (response.isSuccessful()) {
+                    if (response.body().getStatus().equalsIgnoreCase("OK")) {
 
                                          /*
                                          ini belum akurat, karna terkadang keldesa, kec dan kabkota bergeser satu indeks lebih besar
@@ -158,21 +157,22 @@ public class ShareLocService extends Service {
                         String provinsi = response.body().getResults().get(0).getAddressComponents().get(4).getLongName();
                         String negara = response.body().getResults().get(0).getAddressComponents().get(5).getLongName();
 
-                        Log.i(TAG, "onResponse geocodeJson : jalan "+jalan+", keldesa "+keldesa+", kec "+kec+", kabkota "+kabkota+", provinsi "+provinsi+", negara "+negara);
+                        Log.i(TAG, "onResponse geocodeJson : jalan " + jalan + ", keldesa " + keldesa + ", kec " + kec + ", kabkota " + kabkota + ", provinsi " + provinsi + ", negara " + negara);
 
                         // jika masih di riau
-                        if (provinsi.equalsIgnoreCase("Riau")){
-                            nama_kota = kec+", "+kabkota+".";
+                        if (provinsi.equalsIgnoreCase("Riau")) {
+                            nama_kota = kec + ", " + kabkota + ".";
                         } else {
-                            nama_kota = kabkota+", "+provinsi+", "+negara+".";
+                            nama_kota = kabkota + ", " + provinsi + ", " + negara + ".";
                         }
 
                     } else {
-                        Log.e(TAG, "onResponse (not OK):\n status : "+response.body().getStatus());
-                        if (response.body().getError_message()!=null) Log.e(TAG, "onResponse errorMessage : " +response.body().getError_message());
+                        Log.e(TAG, "onResponse (not OK):\n status : " + response.body().getStatus());
+                        if (response.body().getError_message() != null)
+                            Log.e(TAG, "onResponse errorMessage : " + response.body().getError_message());
                     }
                 } else {
-                    Log.e(TAG, "onResponse (not succes) : "+response.errorBody() );
+                    Log.e(TAG, "onResponse (not succes) : " + response.errorBody());
                 }
             }
 
@@ -185,7 +185,7 @@ public class ShareLocService extends Service {
         return nama_kota;
     }
 
-    private boolean isInSegment(double lat, double lng){
+    private boolean isInSegment(double lat, double lng) {
 
         if ((lat >= lowY && lat <= topY) && (lng >= lowX && lng <= topX)) {
             return true;
@@ -198,20 +198,20 @@ public class ShareLocService extends Service {
         apiService.dosenUpdateLocation(nip, status_kehadiran, nama_kota).enqueue(new Callback<ResponseUpdateLocation>() {
             @Override
             public void onResponse(Call<ResponseUpdateLocation> call, Response<ResponseUpdateLocation> response) {
-                if (response.isSuccessful()){
-                    if (response.body().getCode().equalsIgnoreCase("200")){
-                        Log.i(TAG, "onResponse: "+response.body().getMessage());
+                if (response.isSuccessful()) {
+                    if (response.body().getCode().equalsIgnoreCase("200")) {
+                        Log.i(TAG, "onResponse: " + response.body().getMessage());
                     } else {
-                        Log.e(TAG, "onResponse Error: "+response.errorBody().toString());
+                        Log.e(TAG, "onResponse Error: " + response.errorBody().toString());
                     }
                 } else {
-                    Log.e(TAG, "onResponse Error: "+response.errorBody().toString());
+                    Log.e(TAG, "onResponse Error: " + response.errorBody().toString());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseUpdateLocation> call, Throwable t) {
-                Log.e(TAG, "onFailure: "+t.getLocalizedMessage());
+                Log.e(TAG, "onFailure: " + t.getLocalizedMessage());
             }
         });
     }
@@ -221,11 +221,11 @@ public class ShareLocService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        if (locationManager==null){
+        if (locationManager == null) {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         }
 
-        if (locationListener==null){
+        if (locationListener == null) {
             locationListener = new MyLocationListener();
         }
 
@@ -235,7 +235,7 @@ public class ShareLocService extends Service {
         this.stopSelf();
     }
 
-    private class MyLocationListener implements LocationListener{
+    private class MyLocationListener implements LocationListener {
 
         @Override
         public void onLocationChanged(Location location) {
@@ -245,14 +245,14 @@ public class ShareLocService extends Service {
                 longitude = String.valueOf(location.getLongitude());
                 altitude = String.valueOf(location.getAltitude());
 
-                System.out.println("DARI ON lOCATOIN chANGE : "+latittude+" "+longitude+" "+altitude);
+                System.out.println("DARI ON lOCATOIN chANGE : " + latittude + " " + longitude + " " + altitude);
             }
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             String strStatus = "";
-            switch (status){
+            switch (status) {
                 case LocationProvider.AVAILABLE:
                     strStatus = "tersedia";
                 case LocationProvider.OUT_OF_SERVICE:
@@ -261,17 +261,17 @@ public class ShareLocService extends Service {
                     strStatus = "tidak tersedia untuk sementara";
             }
 
-            Toast.makeText(getBaseContext(), provider + " " +strStatus, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), provider + " " + strStatus, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Toast.makeText(getBaseContext(), "Provider: " +provider+ " di-aktifkan", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), "Provider: " + provider + " di-aktifkan", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            Toast.makeText(getBaseContext(), "Provider: " +provider+ " di-nonaktifkan", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), "Provider: " + provider + " di-nonaktifkan", Toast.LENGTH_SHORT).show();
         }
     }
 }
